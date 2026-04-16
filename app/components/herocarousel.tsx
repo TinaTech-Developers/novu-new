@@ -54,7 +54,7 @@ export default function HeroCarousel() {
                 <motion.button
                   onClick={() => router.push("/rooms")}
                   whileHover={{ scale: 1.1 }}
-                  className="bg-[var(--accent)] px-6 py-3 rounded-xl"
+                  className="bg-(--accent) px-6 py-3 rounded-xl"
                 >
                   Book Now
                 </motion.button>
