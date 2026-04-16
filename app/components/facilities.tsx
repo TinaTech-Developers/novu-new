@@ -85,7 +85,7 @@ export default function Facilities() {
   return (
     <section className="py-16 px-6 md:px-20 bg-white flex flex-col gap-14">
       {/* ================= TABS ================= */}
-      <div className="flex gap-6 border-b overflow-x-auto">
+      <div className="flex gap-6 border-b overflow-x-auto overflow-y-hidden">
         {tabs.map((tab) => (
           <button
             key={tab}
