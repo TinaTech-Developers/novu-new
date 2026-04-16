@@ -9,7 +9,7 @@ export default function BookingBar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.5 }}
       className="
-        absolute md:bottom-[-40px] bottom-[-160px]
+        absolute md:bottom-[-40px] bottom-[-100px]
         left-1/2 -translate-x-1/2
         w-[95%] sm:w-[90%] md:w-[80%]
         bg-white shadow-xl rounded-2xl
