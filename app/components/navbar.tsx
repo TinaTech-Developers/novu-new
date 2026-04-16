@@ -29,7 +29,7 @@ export default function Navbar() {
   fixed top-0 left-0 w-full
   flex items-center justify-between
   px-4 md:px-6 py-4
-  bg-white/90 backdrop-blur-md
+  bg-white backdrop-blur-md
   shadow-md
   z-50
 "
@@ -41,7 +41,7 @@ export default function Navbar() {
             alt="Novu Resort Logo"
             width={70}
             height={70}
-            className="rounded-full"
+            className=""
           />
           <span className="font-semibold text-[var(--primary)] hidden sm:block">
             Novu Resort
