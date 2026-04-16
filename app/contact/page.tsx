@@ -6,7 +6,7 @@ export default function ContactPage() {
   return (
     <div className="bg-white">
       {/* ================= HERO ================= */}
-      <section className="relative h-[55vh] flex items-center justify-center text-center">
+      <section className="relative h-[70vh] flex items-center justify-center text-center">
         <img
           src="/hero2.jpg"
           className="absolute inset-0 w-full h-full object-cover"

@@ -22,7 +22,7 @@ const slides = [
 export default function HeroCarousel() {
   const router = useRouter();
   return (
-    <div className="relative h-[70vh]">
+    <div className="relative h-[85vh]">
       <Swiper
         modules={[Navigation, Autoplay]}
         navigation

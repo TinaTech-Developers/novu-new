@@ -43,7 +43,7 @@ export default function ExecutivePage() {
   return (
     <div className="bg-white">
       {/* ================= HERO ================= */}
-      <section className="relative h-[40vh] md:h-[55vh] flex items-center justify-center">
+      <section className="relative h-[50vh] md:h-[70vh] flex items-center justify-center">
         <img
           src="/hero1.jpg"
           className="absolute inset-0 w-full h-full object-cover"

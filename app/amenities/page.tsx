@@ -41,7 +41,7 @@ export default function AmenitiesPage() {
   return (
     <div className="bg-white">
       {/* ================= HERO ================= */}
-      <section className="relative h-[55vh] flex items-center justify-center">
+      <section className="relative h-[70vh] flex items-center justify-center">
         <img
           src="/hero1.jpg"
           className="absolute inset-0 w-full h-full object-cover"
@@ -86,7 +86,7 @@ export default function AmenitiesPage() {
         </div>
 
         {/* FEATURES LIST (THIS IS THE KEY PART) */}
-        <div className="w-full mx-auto mt-16 px-6">
+        <div className="w-full mx-auto mt- px-6">
           <AmenitiesFAQ />
           {/* </div> */}
         </div>

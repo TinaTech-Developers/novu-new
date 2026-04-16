@@ -42,7 +42,7 @@ export default function AmenitiesFAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-10 bg-white">
+    <section className="py-4 bg-white">
       {/* HEADER */}
       <div className="w-full mx-auto text-center px-6">
         <h2 className="text-4xl  text-[var(--primary)]">Hotel Facilities</h2>
