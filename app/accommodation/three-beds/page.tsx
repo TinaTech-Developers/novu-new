@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
+import RoomBookingCard from "../executive/_components/roombookingcard";
 
 export default function ThreeBedsPage() {
   const swiperRef = useRef<any>(null);
@@ -11,16 +12,26 @@ export default function ThreeBedsPage() {
 
   const rooms = [
     {
-      name: "Sunbird Suite",
-      images: ["/sunbird/1.jpg", "/sunbird/2.jpg", "/sunbird/3.jpg"],
+      name: "Ostrich",
+      images: [
+        "/ostrich/Ostritch main bedroom tv-.jpg",
+        "/ostrich/Ostritch lounge tv 1-8890.jpg",
+        "/ostrich/Ostritch main bedroom 3-8908.jpg",
+        "/ostrich/Ostritch 2nd bedroom 3-8900.jpg",
+      ],
       description:
         "A spacious three-bedroom suite designed for families or groups, offering comfort and modern elegance.",
       price: 220,
       facilities: ["WiFi", "Air Conditioning", "Kitchen", "Smart TV"],
     },
     {
-      name: "Horizon Villa",
-      images: ["/horizon/1.jpg", "/horizon/2.jpg", "/horizon/3.jpg"],
+      name: "Peacock",
+      images: [
+        "/peacock/Peascock main bedroom 1-8865.jpg",
+        "/peacock/Peascock Kitchen 1-8836.jpg",
+        "/peacock/Peascock Dining room 1-8832.jpg",
+        "/peacock/Peascock main bedroom 4-8873.jpg",
+      ],
       description:
         "Enjoy breathtaking views and a relaxing atmosphere in this premium three-bed villa.",
       price: 250,
@@ -38,7 +49,7 @@ export default function ThreeBedsPage() {
         />
         <div className="absolute inset-0 bg-black/60" />
 
-        <h1 className="relative text-white text-3xl md:text-5xl font-bold">
+        <h1 className="relative text-white text-3xl md:text-5xl">
           Three Bedroom Apartments
         </h1>
       </section>
@@ -85,7 +96,7 @@ export default function ThreeBedsPage() {
 
             {/* ================= RIGHT: CONTENT ================= */}
             <div className="flex flex-col gap-4">
-              <h2 className="text-2xl md:text-3xl font-bold text-[var(--primary)]">
+              <h2 className="text-2xl md:text-3xl text-[var(--primary)]">
                 {room.name}
               </h2>
 
@@ -102,7 +113,7 @@ export default function ThreeBedsPage() {
                 {room.facilities.map((f, idx) => (
                   <span
                     key={idx}
-                    className="text-xs bg-gray-100 px-3 py-1 rounded-full"
+                    className="text-xs bg-gray-400 px-3 py-1 rounded-full"
                   >
                     {f}
                   </span>
@@ -110,14 +121,18 @@ export default function ThreeBedsPage() {
               </div>
 
               {/* buttons */}
-              <div className="flex gap-3 mt-3">
-                <button className="bg-[var(--primary)] text-white px-6 py-2 rounded-lg">
-                  Book Now
-                </button>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <RoomBookingCard
+                  room={{
+                    name: room.name,
+                    price: room.price,
+                    bookedDates: [{ start: "2026-04-20", end: "2026-04-22" }],
+                  }}
+                />
 
-                <button className="border px-6 py-2 rounded-lg">
+                {/* <button className="border px-6 py-2 rounded-lg text-gray-600 w-full sm:w-auto">
                   View Details
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

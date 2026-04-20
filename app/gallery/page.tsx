@@ -33,7 +33,7 @@ export default function GalleryPage() {
         <div className="absolute inset-0 bg-black/60" />
 
         <div className="relative text-white px-6">
-          <h1 className="text-4xl md:text-5xl font-bold">Gallery</h1>
+          <h1 className="text-4xl md:text-5xl ">Gallery</h1>
           <p className="mt-3 text-gray-200">
             Explore moments from our resort experience
           </p>

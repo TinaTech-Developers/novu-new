@@ -44,7 +44,7 @@ export default function RoomsPage() {
         <div className="absolute inset-0 bg-black/60" />
 
         <div className="relative text-white px-6 max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-bold">Our Apartments</h1>
+          <h1 className="text-4xl md:text-5xl">Our Apartments</h1>
           <p className="mt-3 text-gray-200">
             Experience comfort, space, and luxury in every stay at Novu Resort
           </p>
@@ -69,7 +69,7 @@ export default function RoomsPage() {
       {/* ================= ROOM COMPARISON ================= */}
       <section className="bg-gray-50 py-16">
         <div className="max-w-6xl mx-auto px-6 md:px-20">
-          <h2 className="text-2xl font-bold text-[var(--primary)] mb-8">
+          <h2 className="text-2xl text-center text-[var(--primary)] mb-8">
             Compare Apartments
           </h2>
 
@@ -112,9 +112,7 @@ export default function RoomsPage() {
       </section>
       {/* ================= AMENITIES ================= */}
       <section className="py-16 text-center">
-        <h2 className="text-2xl font-bold text-[var(--primary)]">
-          Included Amenities
-        </h2>
+        <h2 className="text-2xl  text-[var(--primary)]">Included Amenities</h2>
 
         <div className="flex flex-wrap justify-center gap-6 mt-6 text-gray-600 text-sm">
           {[
@@ -134,7 +132,7 @@ export default function RoomsPage() {
       {/* ================= POLICIES ================= */}
       <section className="bg-gray-50 py-16">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-2xl font-bold text-[var(--primary)]">
+          <h2 className="text-2xl text-[var(--primary)]">
             Booking Information
           </h2>
 
@@ -171,7 +169,7 @@ export default function RoomsPage() {
 
             {/* CONTENT */}
             <div className="md:w-1/2 flex flex-col gap-4">
-              <h2 className="text-2xl md:text-3xl font-bold text-[var(--primary)]">
+              <h2 className="text-2xl md:text-3xl text-[var(--primary)]">
                 {room.name}
               </h2>
 

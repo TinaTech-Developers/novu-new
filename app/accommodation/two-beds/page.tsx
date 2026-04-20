@@ -8,6 +8,7 @@ import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import { useState } from "react";
 import { useRef } from "react";
+import RoomBookingCard from "../executive/_components/roombookingcard";
 
 export default function TwoBedsPage() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -16,11 +17,12 @@ export default function TwoBedsPage() {
     {
       name: "Flamingo",
       images: [
-        "/flamingo/IMG_8542.jpg",
-        "/flamingo/IMG_8538.jpg",
-        "/flamingo/IMG_8514-Enhanced-NR.dng",
-        "/flamingo/IMG_8531-Enhanced-NR.dng",
-        "/flamingo/IMG_8537-Enhanced-NR.dng",
+        "/flamingo/flamingo braai area.jpg",
+        "/flamingo/Flamingo kitchen-2.jpg",
+        "/flamingo/flamingo lounge 4.jpg",
+        "/flamingo/IMG_8514-Enhanced-NR.jpg",
+
+        "/flamingo/IMG_8537-Enhanced-NR.jpg",
       ],
       description:
         "The definition of cosy. This villa offers comfort and warmth, perfect for a relaxing getaway.",
@@ -29,7 +31,13 @@ export default function TwoBedsPage() {
     },
     {
       name: "Eagle",
-      images: ["/eagle/IMG_8675.JPG"],
+      images: [
+        "/eagle/Eagle ext 1-8738.jpg",
+        "/eagle/Eagle Lounge tv-8658.jpg",
+        "/eagle/Eagle main 2nd towels 1-8699.jpg",
+        "/eagle/Eagle main bedroom 4-.jpg",
+        "/eagle/Eagle kitchen & lounge-.jpg",
+      ],
       description:
         "Calm olive tones create a peaceful environment for rest and relaxation.",
       price: 150,
@@ -38,8 +46,11 @@ export default function TwoBedsPage() {
     {
       name: "Dove",
       images: [
-        "https://utfs.io/f/32d68877-3833-4950-8a9f-2bce02444f76-1nq6k8.jpg",
-        "https://utfs.io/f/32d68877-3833-4950-8a9f-2bce02444f76-1nq6k8.jpg",
+        "/dove/Dove ext-8829.jpg",
+        "/dove/Dove ext-.jpg",
+        "/dove/Dove 2nd bedroom 2-8776.jpg",
+        "/dove/Dove kitchen 1-.jpg",
+        "/dove/Dove lounge 1-.jpg",
       ],
       description:
         "Minimalistic modern design offering a peaceful and elegant stay.",
@@ -51,9 +62,7 @@ export default function TwoBedsPage() {
       images: [
         "/guineafowl/IMG_8632.JPG",
         "/guineafowl/IMG_8594.JPG",
-        "/guineafowl/IMG_8582.JPG",
         "/guineafowl/IMG_8568.JPG",
-        "/guineafowl/IMG_8566.JPG",
       ],
       description: "A cozy and inviting space perfect for a relaxing stay.",
       price: 150,
@@ -72,9 +81,7 @@ export default function TwoBedsPage() {
         <div className="absolute inset-0 bg-black/60" />
 
         <div className="relative text-white px-4 md:px-6 max-w-2xl">
-          <h1 className="text-2xl md:text-5xl font-bold">
-            Two Bedroom Apartments
-          </h1>
+          <h1 className="text-2xl md:text-5xl">Two Bedroom Apartments</h1>
         </div>
       </section>
 
@@ -91,13 +98,13 @@ export default function TwoBedsPage() {
               }}
               onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
               onSwiper={(swiper) => (swiperRef.current = swiper)}
-              className="w-full h-[380px]"
+              className="w-full h-[420px]"
             >
               {room.images.map((img, i) => (
                 <SwiperSlide key={i}>
                   <img
                     src={img}
-                    className="w-full h-[220px] sm:h-[280px] md:h-[380px] object-cover"
+                    className="w-full h-[220px] sm:h-[280px] md:h-[420px] object-cover"
                   />
                 </SwiperSlide>
               ))}
@@ -158,13 +165,17 @@ export default function TwoBedsPage() {
 
             {/* BUTTONS */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <button className="bg-[var(--primary)] text-white px-6 py-2 rounded-lg w-full sm:w-auto">
-                Book Now
-              </button>
+              <RoomBookingCard
+                room={{
+                  name: room.name,
+                  price: room.price,
+                  bookedDates: [{ start: "2026-04-20", end: "2026-04-22" }],
+                }}
+              />
 
-              <button className="border px-6 py-2 rounded-lg text-gray-600 w-full sm:w-auto">
+              {/* <button className="border px-6 py-2 rounded-lg text-gray-600 w-full sm:w-auto">
                 View Details
-              </button>
+              </button> */}
             </div>
 
             <div className="border-t mt-4 md:mt-6" />

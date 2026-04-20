@@ -18,14 +18,22 @@ export default function ExecutivePage() {
     {
       name: "Shoko",
       price: 80,
-      images: ["/shoko/IMG_8968.JPG"],
+      images: [
+        "/shoko/IMG_8968.JPG",
+        "/shoko/IMG_8981.jpg",
+        "/shoko/IMG_8976.jpg",
+      ],
       description:
         "A calm and contemporary executive room designed for business and leisure stays.",
     },
     {
       name: "Chihwa",
       price: 80,
-      images: ["/chihwa/IMG_8993.JPG"],
+      images: [
+        "/chihwa/IMG_8993.JPG",
+        "/chihwa/IMG_9000.jpg",
+        "/chihwa/IMG_9011.jpg",
+      ],
       description:
         "Elegant interior design offering a peaceful and premium accommodation experience.",
     },
@@ -33,7 +41,9 @@ export default function ExecutivePage() {
       name: "Makombe",
       price: 80,
       images: [
-        "https://5puqigze8f.ufs.sh/f/M8crfG3am8lf43nXphYZDxluYj8EJs1mzIgraNBF4RGkvVnW",
+        "/makombe/IMG_9026.JPG",
+        "/makombe/IMG_9059.JPG",
+        "/makombe/IMG_9050.JPG",
       ],
       description:
         "Elegant interior design offering a peaceful and premium accommodation experience.",

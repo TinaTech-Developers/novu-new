@@ -15,7 +15,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-black/60" />
 
         <div className="relative text-white px-6">
-          <h1 className="text-4xl md:text-5xl font-bold">Contact Us</h1>
+          <h1 className="text-4xl md:text-5xl">Contact Us</h1>
           <p className="mt-3 text-gray-200">
             We’re here to assist you with bookings, inquiries, and support
           </p>
@@ -72,25 +72,25 @@ export default function ContactPage() {
             <input
               type="text"
               placeholder="Full Name"
-              className="px-4 py-3 rounded-lg border outline-none focus:border-[var(--primary)]"
+              className="px-4 py-3 rounded-lg border border-gray-300 text-gray-600 outline-none focus:border-[var(--primary)]"
             />
 
             <input
               type="email"
               placeholder="Email Address"
-              className="px-4 py-3 rounded-lg border outline-none focus:border-[var(--primary)]"
+              className="px-4 py-3 rounded-lg border border-gray-300 text-gray-600 outline-none focus:border-[var(--primary)]"
             />
 
             <input
               type="text"
               placeholder="Subject"
-              className="px-4 py-3 rounded-lg border outline-none focus:border-[var(--primary)]"
+              className="px-4 py-3 rounded-lg border border-gray-300 text-gray-600 outline-none focus:border-[var(--primary)]"
             />
 
             <textarea
               rows={5}
               placeholder="Your Message"
-              className="px-4 py-3 rounded-lg border outline-none focus:border-[var(--primary)]"
+              className="px-4 py-3 rounded-lg border border-gray-300 text-gray-600 outline-none focus:border-[var(--primary)]"
             />
 
             <button className="bg-[var(--primary)] text-white py-3 rounded-lg mt-2 hover:opacity-90 transition">
