@@ -70,7 +70,7 @@ const content: Record<TabType, { title: string; text: string; image: string }> =
     Conferences: {
       title: "Conference Rooms",
       text: "Perfect venues for meetings and corporate events.",
-      image: "/hero2.jpg",
+      image: "/IMG_9076.JPG",
     },
     Gallery: {
       title: "Explore Our Resort",
@@ -313,7 +313,7 @@ export default function Facilities() {
             {/* SMALL CARD 1 */}
             <div className="relative group overflow-hidden rounded-3xl shadow-lg h-[200px]">
               <img
-                src="/hero2.jpg"
+                src="/IMG_4586-min-1024x870.webp"
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                 alt="Quad Biking"
               />
@@ -326,7 +326,7 @@ export default function Facilities() {
             {/* SMALL CARD 2 */}
             <div className="relative group overflow-hidden rounded-3xl shadow-lg h-[200px]">
               <img
-                src="/hero1.jpg"
+                src="/paintball-spread_1.jpg"
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                 alt="Ball Painting"
               />
@@ -339,7 +339,7 @@ export default function Facilities() {
             {/* SMALL CARD 3 */}
             <div className="relative group overflow-hidden rounded-3xl shadow-lg h-[200px]">
               <img
-                src="/hero2.jpg"
+                src="/d2f25d3f-e56a-4344-9433-723f23ac6a14.jpeg"
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                 alt="Landmarks"
               />
@@ -352,7 +352,7 @@ export default function Facilities() {
             {/* SMALL CARD 4 */}
             <div className="relative group overflow-hidden rounded-3xl shadow-lg h-[200px]">
               <img
-                src="/hero1.jpg"
+                src="/173786231885.jpg"
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                 alt="Hiking"
               />
@@ -488,7 +488,7 @@ export default function Facilities() {
             {/* BIG HERO IMAGE */}
             <div className="md:col-span-2 relative rounded-3xl overflow-hidden shadow-xl h-[450px] group">
               <img
-                src="/hero1.jpg"
+                src="/20260411_081033.jpg"
                 alt="Gallery Main"
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
               />
@@ -505,7 +505,11 @@ export default function Facilities() {
 
             {/* SIDE THUMBNAILS */}
             <div className="flex flex-col gap-4">
-              {["/hero2.jpg", "/hero1.jpg", "/hero2.jpg"].map((img, i) => (
+              {[
+                "/hero1.jpg ",
+                "/flamingo/flamingo lounge 4.jpg",
+                "/hero2.jpg",
+              ].map((img, i) => (
                 <div
                   key={i}
                   className="relative group overflow-hidden rounded-2xl shadow-lg h-[140px]"
@@ -524,21 +528,24 @@ export default function Facilities() {
 
           {/* BOTTOM IMAGE STRIP */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {["/hero1.jpg", "/hero2.jpg", "/hero1.jpg", "/hero2.jpg"].map(
-              (img, i) => (
-                <div
-                  key={i}
-                  className="relative group overflow-hidden rounded-2xl shadow-md h-[160px]"
-                >
-                  <img
-                    src={img}
-                    alt={`Gallery grid ${i}`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                </div>
-              ),
-            )}
+            {[
+              "/hero1.jpg",
+              "/hero2.jpg",
+              "/IMG_9076.JPG",
+              "/flamingo/flamingo braai area.jpg",
+            ].map((img, i) => (
+              <div
+                key={i}
+                className="relative group overflow-hidden rounded-2xl shadow-md h-[160px]"
+              >
+                <img
+                  src={img}
+                  alt={`Gallery grid ${i}`}
+                  className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              </div>
+            ))}
           </div>
         </div>
       )}
