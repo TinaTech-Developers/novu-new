@@ -8,6 +8,11 @@ import { useRouter } from "next/navigation";
 
 const slides = [
   {
+    image: "/20260411_081033.jpg",
+    title: "Discover Novu Resort",
+    subtitle: "Where Luxury Meets Nature",
+  },
+  {
     image: "/hero1.jpg",
     title: "Relax at Novu Resort",
     subtitle: "Luxury & Comfort in Nature",
