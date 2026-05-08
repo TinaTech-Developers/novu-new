@@ -15,32 +15,52 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
   const today = new Date();
 
   const days = useMemo(() => {
-    return Array.from({ length: 30 }, (_, i) => addDays(today, i)); // ✅ changed 60 → 30
+    return Array.from({ length: 30 }, (_, i) => addDays(today, i));
   }, []);
 
+  // ================= BOOKED CHECK =================
   const isBooked = (date: Date) => {
     return bookedDates.some((b) => {
-      const start = new Date(b.start);
-      const end = new Date(b.end);
-      return isWithinInterval(date, { start, end });
+      const bStart = new Date(b.start);
+      const bEnd = new Date(b.end);
+
+      return isWithinInterval(date, { start: bStart, end: bEnd });
     });
   };
 
+  // ================= RANGE VALIDATION =================
+  const isRangeInvalid = (start: Date, end: Date) => {
+    return bookedDates.some((b) => {
+      const bStart = new Date(b.start);
+      const bEnd = new Date(b.end);
+
+      return start <= bEnd && end >= bStart;
+    });
+  };
+
+  // ================= CLICK HANDLER =================
   const handleClick = (date: Date) => {
+    // first click → set start
     if (!start || (start && end)) {
       setStart(date);
       setEnd(null);
       onChange({ start: date, end: null });
-    } else {
-      if (date < start) {
-        setEnd(start);
-        setStart(date);
-        onChange({ start: date, end: start });
-      } else {
-        setEnd(date);
-        onChange({ start, end: date });
-      }
+      return;
     }
+
+    // second click → set end
+    const newStart = date < start ? date : start;
+    const newEnd = date < start ? start : date;
+
+    // prevent overlap
+    if (isRangeInvalid(newStart, newEnd)) {
+      alert("Selected range overlaps with existing booking");
+      return;
+    }
+
+    setStart(newStart);
+    setEnd(newEnd);
+    onChange({ start: newStart, end: newEnd });
   };
 
   return (
@@ -54,7 +74,13 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
           const selected =
             (start && isSameDay(day, start)) || (end && isSameDay(day, end));
 
-          const inRange = start && end && isWithinInterval(day, { start, end });
+          const inRange =
+            start &&
+            end &&
+            isWithinInterval(day, {
+              start,
+              end,
+            });
 
           return (
             <button
