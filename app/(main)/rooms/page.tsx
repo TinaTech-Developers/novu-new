@@ -78,32 +78,39 @@ export default function RoomsPage() {
               <thead>
                 <tr className="border-b">
                   <th className="py-3 text-gray-600">Type</th>
-                  <th className="py-3 text-gray-600">Size</th>
+                  {/* <th className="py-3 text-gray-600">Size</th> */}
                   <th className="py-3 text-gray-600">Guests</th>
-                  <th className="py-3 text-gray-600">Features</th>
+                  <th className="py-3 text-gray-600">Facilities</th>
+                  <th className="py-3 text-gray-600">Description</th>
                 </tr>
               </thead>
 
               <tbody className="text-gray-600">
                 <tr className="border-b border-t border-gray-600">
                   <td className="py-4">2 Bedroom</td>
-                  <td>45 sqm</td>
+                  {/* <td>45 sqm</td> */}
                   <td>4 Guests</td>
-                  <td>Kitchen, WiFi, TV, WiFi</td>
+
+                  <td>Kitchen, WiFi, Dstv</td>
+                  <td></td>
                 </tr>
 
                 <tr className="border-b">
                   <td className="py-4">3 Bedroom</td>
-                  <td>65 sqm</td>
+                  {/* <td>65 sqm</td> */}
                   <td>6 Guests</td>
-                  <td>Full Kitchen, Lounge, TV, WiFi</td>
+
+                  <td>Full Kitchen, Lounge, Dstv, WiFi</td>
+                  <td></td>
                 </tr>
 
                 <tr>
                   <td className="py-4">Executive</td>
-                  <td>80 sqm</td>
+                  {/* <td>80 sqm</td> */}
                   <td>2 Guests</td>
-                  <td>Luxury Suite, Bathtub, TV, WiFi</td>
+
+                  <td>Luxury Suite, Bathtub, Dstv, WiFi</td>
+                  <td></td>
                 </tr>
               </tbody>
             </table>

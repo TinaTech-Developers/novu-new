@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -8,6 +9,8 @@ export default function BookingsPage() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -138,8 +141,8 @@ export default function BookingsPage() {
 
                   <td className="p-3 flex gap-2 flex-wrap">
                     <button
-                      onClick={() => setSelected(b)}
-                      className="text-xs px-2 py-1 bg-gray-700 rounded"
+                      onClick={() => router.push(`/admin/bookings/${b._id}`)}
+                      className="text-xs px-2 py-1 bg-gray-800 text-white rounded"
                     >
                       View
                     </button>

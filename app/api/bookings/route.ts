@@ -6,40 +6,16 @@ export async function GET() {
   try {
     await connectDB();
 
-    const rooms = await Room.find();
     const bookings = await Booking.find();
 
-    const now = new Date();
-
-    // ================= CHECK IF ROOM IS BOOKED =================
-    const isRoomBooked = (roomId: string) => {
-      return bookings.some((b) => {
-        if (b.roomId.toString() !== roomId.toString()) return false;
-
-        return (
-          new Date(b.checkIn) <= now &&
-          new Date(b.checkOut) >= now &&
-          b.status !== "cancelled"
-        );
-      });
-    };
-
-    // ================= ATTACH DYNAMIC STATUS =================
-    const enrichedRooms = rooms.map((room) => {
-      const booked = isRoomBooked(room._id);
-
-      return {
-        ...room.toObject(),
-        available: !booked,
-        isBooked: booked,
-      };
-    });
-
-    return Response.json(enrichedRooms);
+    return Response.json(bookings);
   } catch (error: any) {
-    console.error("❌ GET rooms error:", error);
+    console.error("GET BOOKINGS ERROR:", error);
 
-    return Response.json({ error: "Failed to fetch rooms" }, { status: 500 });
+    return Response.json(
+      { error: "Failed to fetch bookings" },
+      { status: 500 },
+    );
   }
 }
 
@@ -49,21 +25,40 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    console.log("📥 Incoming booking:", body);
-
     // ================= VALIDATION =================
     if (!body.roomId) {
       return Response.json({ error: "roomId is required" }, { status: 400 });
     }
 
-    if (!body.fullName || !body.email || !body.checkIn || !body.checkOut) {
+    const checkIn = new Date(body.checkIn);
+    const checkOut = new Date(body.checkOut);
+
+    // ================= CHECK OVERLAPPING BOOKINGS =================
+    const overlappingBooking = await Booking.findOne({
+      roomId: body.roomId,
+      status: { $ne: "cancelled" },
+
+      $and: [
+        {
+          checkIn: { $lt: checkOut },
+        },
+        {
+          checkOut: { $gt: checkIn },
+        },
+      ],
+    });
+
+    // ================= BLOCK DOUBLE BOOKING =================
+    if (overlappingBooking) {
       return Response.json(
-        { error: "Missing required booking fields" },
+        {
+          error: "Room already booked for selected dates",
+        },
         { status: 400 },
       );
     }
 
-    // ================= NORMALIZE DATA =================
+    // ================= CREATE BOOKING =================
     const booking = await Booking.create({
       roomId: body.roomId,
       roomName: body.roomName,
@@ -73,23 +68,20 @@ export async function POST(req: Request) {
       email: body.email,
       phone: body.phone,
 
-      checkIn: new Date(body.checkIn),
-      checkOut: new Date(body.checkOut),
+      checkIn,
+      checkOut,
 
       nights: body.nights || 1,
       total: body.total || 0,
       guests: body.guests || 1,
+
+      status: "confirmed",
     });
 
     return Response.json(booking);
   } catch (error: any) {
-    console.error("❌ Booking API FULL ERROR:", error);
+    console.error("BOOKING ERROR:", error);
 
-    return Response.json(
-      {
-        error: error.message,
-      },
-      { status: 500 },
-    );
+    return Response.json({ error: error.message }, { status: 500 });
   }
 }

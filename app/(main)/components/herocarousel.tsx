@@ -30,8 +30,8 @@ export default function HeroCarousel() {
     <div className="relative h-[85vh]">
       <Swiper
         modules={[Navigation, Autoplay]}
-        navigation
-        autoplay={{ delay: 5000 }}
+        // navigation
+        autoplay={{ delay: 10000 }}
         loop
         className="h-full"
       >
@@ -56,13 +56,13 @@ export default function HeroCarousel() {
                 </h1>
                 <p className="text-lg mb-6">{slide.subtitle}</p>
 
-                <motion.button
+                {/* <motion.button
                   onClick={() => router.push("/rooms")}
                   whileHover={{ scale: 1.1 }}
                   className="bg-(--accent) px-6 py-3 rounded-xl"
                 >
                   Book Now
-                </motion.button>
+                </motion.button> */}
               </motion.div>
             </div>
           </SwiperSlide>

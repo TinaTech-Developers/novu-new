@@ -160,7 +160,7 @@ export default function Facilities() {
 
                 {/* CONTENT */}
                 <div className="p-5 flex flex-col gap-3">
-                  <h4 className="text-xl font-bold text-[var(--primary)]">
+                  <h4 className="text-xl text-[var(--primary)]">
                     {item.title}
                   </h4>
 

@@ -49,9 +49,7 @@ export default function TwoBedsPage() {
         <div className="absolute inset-0 bg-black/60" />
 
         <div className="relative text-white px-4 md:px-6 max-w-2xl">
-          <h1 className="text-3xl md:text-5xl font-semibold">
-            Two Bedroom Apartments
-          </h1>
+          <h1 className="text-3xl md:text-5xl">Two Bedroom Apartments</h1>
 
           <p className="mt-4 text-sm md:text-base text-gray-200">
             Experience luxury, comfort, and breathtaking surroundings at Novu

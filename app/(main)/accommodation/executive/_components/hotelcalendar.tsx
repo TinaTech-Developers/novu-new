@@ -1,7 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { format, addDays, isSameDay, isWithinInterval } from "date-fns";
+import {
+  format,
+  addDays,
+  startOfDay,
+  isSameDay,
+  isAfter,
+  eachDayOfInterval,
+} from "date-fns";
 
 type Props = {
   bookedDates?: { start: string; end: string }[];
@@ -12,75 +19,114 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
   const [start, setStart] = useState<Date | null>(null);
   const [end, setEnd] = useState<Date | null>(null);
 
-  const today = new Date();
+  // SHOW 60 DAYS
+  const days = useMemo(
+    () => Array.from({ length: 30 }, (_, i) => addDays(new Date(), i)),
+    [],
+  );
 
-  const days = useMemo(() => {
-    return Array.from({ length: 30 }, (_, i) => addDays(today, i));
-  }, []);
+  // ================= NORMALISE =================
+  const norm = (d: Date) => startOfDay(d).getTime();
 
   // ================= BOOKED CHECK =================
-  const isBooked = (date: Date) => {
-    return bookedDates.some((b) => {
-      const bStart = new Date(b.start);
-      const bEnd = new Date(b.end);
+  const isBooked = (day: Date) => {
+    const current = startOfDay(day).getTime();
 
-      return isWithinInterval(date, { start: bStart, end: bEnd });
+    return bookedDates.some((b) => {
+      const start = startOfDay(new Date(b.start)).getTime();
+
+      const end = startOfDay(new Date(b.end)).getTime();
+
+      // hotel logic:
+      // check-in day booked
+      // checkout day free
+      return current >= start && current < end;
     });
   };
-
-  // ================= RANGE VALIDATION =================
-  const isRangeInvalid = (start: Date, end: Date) => {
-    return bookedDates.some((b) => {
-      const bStart = new Date(b.start);
-      const bEnd = new Date(b.end);
-
-      return start <= bEnd && end >= bStart;
+  // ================= RANGE HAS BOOKED DAYS =================
+  const rangeContainsBookedDates = (startDate: Date, endDate: Date) => {
+    const range = eachDayOfInterval({
+      start: startDate,
+      end: endDate,
     });
+
+    return range.some((day) => isBooked(day));
+  };
+
+  // ================= SELECTED RANGE =================
+  const isInSelectedRange = (day: Date) => {
+    if (!start || !end) return false;
+
+    return day >= start && day <= end;
   };
 
   // ================= CLICK HANDLER =================
-  const handleClick = (date: Date) => {
-    // first click → set start
+  const handleClick = (day: Date) => {
+    const selectedDay = startOfDay(day);
+
+    // BLOCK BOOKED DAYS
+    if (isBooked(selectedDay)) return;
+
+    // START NEW SELECTION
     if (!start || (start && end)) {
-      setStart(date);
+      setStart(selectedDay);
       setEnd(null);
-      onChange({ start: date, end: null });
+
+      onChange({
+        start: selectedDay,
+        end: null,
+      });
+
       return;
     }
 
-    // second click → set end
-    const newStart = date < start ? date : start;
-    const newEnd = date < start ? start : date;
+    // USER CLICKED BEFORE START
+    const newStart = isAfter(start, selectedDay) ? selectedDay : start;
 
-    // prevent overlap
-    if (isRangeInvalid(newStart, newEnd)) {
-      alert("Selected range overlaps with existing booking");
+    const newEnd = isAfter(start, selectedDay) ? start : selectedDay;
+
+    // BLOCK RANGE IF IT CONTAINS BOOKED DAYS
+    if (rangeContainsBookedDates(newStart, newEnd)) {
       return;
     }
 
     setStart(newStart);
     setEnd(newEnd);
-    onChange({ start: newStart, end: newEnd });
+
+    onChange({
+      start: newStart,
+      end: newEnd,
+    });
   };
 
   return (
-    <div className="bg-white rounded-2xl border p-4">
-      <h3 className="font-semibold mb-3 text-gray-700">Select Your Stay</h3>
+    <div className="bg-white border rounded-2xl p-4">
+      {/* HEADER */}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-lg">Select Dates</h3>
 
-      <div className="grid grid-cols-7 gap-2 text-xs text-center">
+        <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded bg-gray-300" />
+            <span>Booked</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded bg-[var(--primary)]" />
+            <span>Selected</span>
+          </div>
+        </div>
+      </div>
+
+      {/* CALENDAR */}
+      <div className="grid grid-cols-7 gap-2">
         {days.map((day) => {
           const disabled = isBooked(day);
 
           const selected =
             (start && isSameDay(day, start)) || (end && isSameDay(day, end));
 
-          const inRange =
-            start &&
-            end &&
-            isWithinInterval(day, {
-              start,
-              end,
-            });
+          const inRange = isInSelectedRange(day);
 
           return (
             <button
@@ -88,26 +134,27 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
               disabled={disabled}
               onClick={() => handleClick(day)}
               className={`
-                p-2 rounded-lg transition text-xs
-                ${disabled ? "bg-gray-200 text-gray-700 cursor-not-allowed" : ""}
-                ${selected ? "bg-[var(--primary)] text-white" : ""}
-                ${inRange ? "bg-blue-100" : ""}
-                ${!selected && !disabled ? "hover:bg-gray-100" : ""}
-              `}
+    relative p-2 rounded-lg text-xs transition
+
+    ${selected ? "bg-[var(--primary)] text-white" : ""}
+
+    ${!selected && !disabled ? "hover:bg-gray-100 cursor-pointer" : ""}
+
+    ${disabled ? "bg-gray-300 text-gray-500 cursor-not-allowed" : ""}
+  `}
             >
               <div className="text-[10px]">{format(day, "EEE")}</div>
+
               <div className="font-semibold">{format(day, "d")}</div>
+
+              {/* BOOKED INDICATOR */}
+              {disabled && (
+                <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+              )}
             </button>
           );
         })}
       </div>
-
-      {start && (
-        <p className="mt-3 text-sm text-gray-600">
-          Check-in: {format(start, "PPP")}
-          {end && <> → Check-out: {format(end, "PPP")}</>}
-        </p>
-      )}
     </div>
   );
 }
