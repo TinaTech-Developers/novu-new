@@ -90,7 +90,7 @@ export default function ExecutivePage() {
               <div className="p-6 flex flex-col justify-between">
                 <div>
                   <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold text-[var(--primary)]">
+                    <h2 className="text-2xl text-[var(--primary)]">
                       {room.name}
                     </h2>
 

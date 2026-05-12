@@ -178,7 +178,7 @@ export default function RoomBookingCard({ room }: any) {
       {/* BOOK BUTTON */}
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-[var(--primary)] text-white px-6 py-2 rounded-sm hover:opacity-90 transition"
+        className="bg-[var(--primary)] text-white px-6 py-2 rounded-sm hover:opacity-90 transition mt-10 md:mt-0"
       >
         Book Now
       </button>
