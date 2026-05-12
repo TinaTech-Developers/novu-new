@@ -246,22 +246,23 @@ export default function RoomBookingCard({ room }: any) {
 
                 {/* DATE SUMMARY */}
                 {startDate && endDate && (
-                  <div className="bg-gray-100 p-4 rounded-lg space-y-1">
-                    <p>
-                      <span className="font-semibold">Check In:</span>{" "}
+                  <div className="bg-gray-100 p-2 rounded-sm space-y-1">
+                    <p className="text-sm">
+                      <span className="font-semibold text-xs">Check In:</span>{" "}
                       {startDate.toDateString()}
                     </p>
 
-                    <p>
-                      <span className="font-semibold">Check Out:</span>{" "}
+                    <p className="text-sm">
+                      <span className="font-semibold text-xs">Check Out:</span>{" "}
                       {endDate.toDateString()}
                     </p>
 
-                    <p>
-                      <span className="font-semibold">Nights:</span> {nights}
+                    <p className="text-sm">
+                      <span className="font-semibold text-xs">Nights:</span>{" "}
+                      {nights}
                     </p>
 
-                    <p className="font-bold text-lg">
+                    <p className="font-bold text-sm">
                       Total: ${total.toFixed(2)}
                     </p>
                   </div>
