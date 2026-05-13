@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import AdminLayout from "../_components/layout";
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -70,6 +71,7 @@ export default function BookingsPage() {
   };
 
   return (
+    <AdminLayout>
     <div className="space-y-6">
       {/* ================= HEADER ================= */}
       <div className="flex flex-col md:flex-row justify-between gap-3">
@@ -216,5 +218,6 @@ export default function BookingsPage() {
         </div>
       )}
     </div>
+    </AdminLayout>
   );
 }

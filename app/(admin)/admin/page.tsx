@@ -1,135 +1,133 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
-export default function AdminDashboardV2() {
-  const [bookings, setBookings] = useState<any[]>([]);
+export default function LoginPage() {
+  const router = useRouter();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("/api/bookings");
-        const data = await res.json();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-        console.log("BOOKINGS API RESPONSE:", data);
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        // 🔥 FIX HERE
-        setBookings(Array.isArray(data) ? data : data?.bookings || []);
-      } catch (err) {
-        console.error("Failed to load bookings", err);
-        setBookings([]);
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        return;
       }
-    };
 
-    fetchData();
-  }, []);
-  const totalRevenue = useMemo(
-    () => bookings.reduce((sum, b) => sum + (b.total || 0), 0),
-    [bookings],
-  );
+      // store token (simple version)
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-  const confirmed = bookings.filter((b) => b.status === "confirmed").length;
-
-  const occupancy = bookings.length ? (confirmed / bookings.length) * 100 : 0;
-
-  const avgRevenue = bookings.length ? totalRevenue / bookings.length : 0;
+      router.push("/admin/dashboard");
+    } catch (err) {
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="space-y-6 bg-gray-50 min-h-screen p-6">
-      {/* HEADER */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-800">
-          Hotel ERP Control Center
-        </h1>
-        <p className="text-gray-700">
-          Real-time operations, revenue & performance analytics
-        </p>
+    <div className="min-h-screen flex">
+      {/* LEFT SIDE (branding) */}
+      <div className="hidden lg:flex w-1/2 bg-[var(--primary)] text-white items-center justify-center p-10">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="max-w-md"
+        >
+          <h1 className="text-4xl font-bold">Novu Resort Management System</h1>
+
+          <p className="mt-4 text-white/80">
+            Manage rooms, bookings, guests, and revenue in one powerful system.
+          </p>
+
+          <div className="mt-10 space-y-2 text-white/80 text-sm">
+            <p>✔ Real-time bookings</p>
+            <p>✔ Walk-in management</p>
+            <p>✔ Admin dashboard</p>
+          </div>
+        </motion.div>
       </div>
 
-      {/* KPI GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <KPI title="Total Bookings" value={bookings.length} />
-        <KPI title="Revenue" value={`$${totalRevenue}`} />
-        <KPI title="Occupancy" value={`${occupancy.toFixed(1)}%`} />
-        <KPI title="Avg Booking" value={`$${avgRevenue.toFixed(0)}`} />
-      </div>
+      {/* RIGHT SIDE (form) */}
+      <div className="flex-1 flex items-center justify-center bg-gray-50 p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md bg-white border rounded-2xl p-8 shadow-sm"
+        >
+          <h2 className="text-2xl font-bold text-gray-800">Welcome Back 👋</h2>
 
-      {/* MAIN GRID */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {/* PERFORMANCE GAUGE */}
-        <div className="bg-white border rounded-xl p-5">
-          <h2 className="font-semibold text-gray-800 mb-4">
-            Performance Score
-          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Sign in to access your dashboard
+          </p>
 
-          <div className="flex flex-col items-center justify-center">
-            <div className="relative w-44 h-44">
-              <div className="absolute inset-0 rounded-full border-8 border-gray-100" />
-
-              <div
-                className="absolute inset-0 rounded-full border-8"
-                style={{
-                  borderColor: "var(--primary)",
-                  clipPath: `inset(0 ${100 - occupancy}% 0 0)`,
-                }}
+          <form onSubmit={handleLogin} className="mt-6 space-y-4">
+            {/* EMAIL */}
+            <div>
+              <label className="text-sm text-gray-600">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full mt-1 border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                placeholder="admin@hotel.com"
               />
-
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold text-gray-800">
-                  {occupancy.toFixed(0)}%
-                </span>
-              </div>
             </div>
 
-            <p className="text-sm text-gray-700 mt-3">
-              System occupancy performance
-            </p>
-          </div>
-        </div>
+            {/* PASSWORD */}
+            <div>
+              <label className="text-sm text-gray-600">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full mt-1 border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                placeholder="••••••••"
+              />
+            </div>
 
-        {/* RECENT BOOKINGS */}
-        <div className="bg-white border rounded-xl p-5 md:col-span-2">
-          <h2 className="font-semibold text-gray-800 mb-4">Recent Bookings</h2>
-
-          <div className="space-y-3 max-h-72 overflow-y-auto pr-2">
-            {bookings.slice(0, 8).map((b) => (
-              <div
-                key={b._id}
-                className="flex justify-between items-center border-b pb-2"
-              >
-                <div>
-                  <p className="text-black font-medium">{b.roomName}</p>
-                  <p className="text-sm text-gray-700">{b.fullName}</p>
-                </div>
-
-                <div className="text-right">
-                  <p className="text-gray-800 font-semibold">${b.total}</p>
-                  <p className="text-xs text-gray-700">{b.status}</p>
-                </div>
+            {/* ERROR */}
+            {error && (
+              <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+                {error}
               </div>
-            ))}
-          </div>
-        </div>
+            )}
+
+            {/* BUTTON */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[var(--primary)] text-white py-3 rounded-xl font-medium hover:opacity-90 transition"
+            >
+              {loading ? "Signing in..." : "Login"}
+            </button>
+
+            {/* FOOTER */}
+            <p className="text-xs text-gray-400 text-center mt-4">
+              Secure admin access only
+            </p>
+          </form>
+        </motion.div>
       </div>
-
-      {/* SYSTEM STATUS */}
-      <div className="bg-white border rounded-xl p-5">
-        <h2 className="font-semibold text-gray-800 mb-2">System Status</h2>
-
-        <p className="text-gray-700 text-sm">
-          All services operational • Booking engine active • Database synced
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* KPI CARD */
-function KPI({ title, value }: any) {
-  return (
-    <div className="bg-white border rounded-xl p-5">
-      <p className="text-sm text-gray-700">{title}</p>
-      <h2 className="text-2xl font-bold text-gray-800">{value}</h2>
     </div>
   );
 }
