@@ -302,3 +302,6 @@ export default function RoomBookingCard({ room }: any) {
     </>
   );
 }
+
+
+the client should adding payements and balances, checking and checkout times etc

@@ -45,7 +45,7 @@ export default function AdminLayout({
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center gap-3 px-4 py-3  text-sm font-medium transition-all
+                  flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all
 
                   ${
                     active ?
