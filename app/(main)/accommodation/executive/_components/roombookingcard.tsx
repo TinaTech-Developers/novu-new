@@ -44,7 +44,7 @@ export default function RoomBookingCard({ room }: any) {
   // ================= FILTER BOOKINGS FOR THIS ROOM =================
   const roomBookings = bookings.filter(
     (b) =>
-      b.roomId?.toString() === room._id?.toString() && b.status !== "cancelled",
+      b.roomId?.toString() === room._id?.toString() && b.status === "confirmed",
   );
 
   // ================= OVERLAP CHECK =================

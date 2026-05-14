@@ -1,12 +1,11 @@
 import { connectDB } from "@/lib/mongodb";
-import Room from "@/models/Room";
 import Booking from "@/models/Booking";
 
 export async function GET() {
   try {
     await connectDB();
 
-    const bookings = await Booking.find();
+    const bookings = await Booking.find().sort({ createdAt: -1 });
 
     return Response.json(bookings);
   } catch (error: any) {
@@ -31,12 +30,15 @@ export async function POST(req: Request) {
     }
 
     const checkIn = new Date(body.checkIn);
+
     const checkOut = new Date(body.checkOut);
 
-    // ================= CHECK OVERLAPPING BOOKINGS =================
+    // ================= IMPORTANT =================
+    // ONLY BLOCK CONFIRMED BOOKINGS
     const overlappingBooking = await Booking.findOne({
       roomId: body.roomId,
-      status: { $ne: "cancelled" },
+
+      status: "pending",
 
       $and: [
         {
@@ -58,24 +60,32 @@ export async function POST(req: Request) {
       );
     }
 
-    // ================= CREATE BOOKING =================
+    // ================= CREATE AS PENDING =================
     const booking = await Booking.create({
       roomId: body.roomId,
+
       roomName: body.roomName,
+
       category: body.category || "unknown",
 
       fullName: body.fullName,
+
       email: body.email,
+
       phone: body.phone,
 
       checkIn,
+
       checkOut,
 
       nights: body.nights || 1,
+
       total: body.total || 0,
+
       guests: body.guests || 1,
 
-      status: "confirmed",
+      // IMPORTANT
+      status: body.status || "pending",
     });
 
     return Response.json(booking);
