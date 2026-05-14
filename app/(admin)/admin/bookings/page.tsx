@@ -72,152 +72,154 @@ export default function BookingsPage() {
 
   return (
     <AdminLayout>
-    <div className="space-y-6">
-      {/* ================= HEADER ================= */}
-      <div className="flex flex-col md:flex-row justify-between gap-3">
-        <h1 className="text-2xl font-bold text-gray-800">Bookings</h1>
+      <div className="space-y-6">
+        {/* ================= HEADER ================= */}
+        <div className="flex flex-col md:flex-row justify-between gap-3">
+          <h1 className="text-2xl font-bold text-gray-800">Bookings</h1>
 
-        <div className="flex gap-2 flex-wrap">
-          <input
-            placeholder="Search bookings..."
-            className="border p-2 rounded-lg text-sm text-gray-600 border-gray-300"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="flex gap-2 flex-wrap">
+            <input
+              placeholder="Search bookings..."
+              className="border p-2 rounded-lg text-sm text-gray-600 border-gray-300"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
 
-          <select
-            className="border p-2 rounded-lg text-sm text-gray-600 border-gray-300"
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="all">All</option>
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-      </div>
-
-      {/* ================= KPI CARDS ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { label: "Total Bookings", value: stats.total },
-          { label: "Pending", value: stats.pending },
-          { label: "Confirmed", value: stats.confirmed },
-          { label: "Revenue", value: `$${stats.revenue}` },
-        ].map((s, i) => (
-          <div key={i} className="bg-white p-4 border rounded-xl">
-            <p className="text-gray-500 text-sm">{s.label}</p>
-            <h2 className="text-xl font-bold text-gray-800">{s.value}</h2>
+            <select
+              className="border p-2 rounded-lg text-sm text-gray-600 border-gray-300"
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
           </div>
-        ))}
-      </div>
-
-      {/* ================= TABLE ================= */}
-      <div className="bg-white border rounded-xl overflow-hidden">
-        <div className="max-h-[500px] overflow-y-auto">
-          <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-gray-100 text-gray-600">
-              <tr>
-                <th className="p-3 text-left">Room</th>
-                <th className="p-3 text-left">Guest</th>
-                <th className="p-3 text-left">Email</th>
-                <th className="p-3 text-left">Status</th>
-                <th className="p-3 text-left">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {filtered.map((b) => (
-                <tr key={b._id} className="border-t hover:bg-gray-50">
-                  <td className="p-3 font-medium text-gray-700">
-                    {b.roomName}
-                  </td>
-                  <td className="p-3 text-gray-600">{b.fullName}</td>
-                  <td className="p-3 text-gray-600">{b.email}</td>
-
-                  <td className="p-3">
-                    <span className="px-2 py-1 text-xs rounded bg-gray-500">
-                      {b.status}
-                    </span>
-                  </td>
-
-                  <td className="p-3 flex gap-2 flex-wrap">
-                    <button
-                      onClick={() => router.push(`/admin/bookings/${b._id}`)}
-                      className="text-xs px-2 py-1 bg-gray-800 text-white rounded"
-                    >
-                      View
-                    </button>
-
-                    <button
-                      onClick={() => updateStatus(b._id, "confirmed")}
-                      className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded"
-                    >
-                      Confirm
-                    </button>
-
-                    <button
-                      onClick={() => updateStatus(b._id, "cancelled")}
-                      className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded"
-                    >
-                      Cancel
-                    </button>
-
-                    <a
-                      href={`mailto:${b.email}?subject=Booking Update`}
-                      className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded"
-                    >
-                      Email
-                    </a>
-
-                    <button
-                      onClick={() => deleteBooking(b._id)}
-                      className="text-xs px-2 py-1 bg-black text-white rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
-      </div>
 
-      {/* ================= MODAL ================= */}
-      {selected && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl w-[90%] max-w-md">
-            <h2 className="text-lg font-bold mb-3">Booking Details</h2>
+        {/* ================= KPI CARDS ================= */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[
+            { label: "Total Bookings", value: stats.total },
+            { label: "Pending", value: stats.pending },
+            { label: "Confirmed", value: stats.confirmed },
+            { label: "Revenue", value: `$${stats.revenue}` },
+          ].map((s, i) => (
+            <div key={i} className="bg-white p-4 border rounded-xl">
+              <p className="text-gray-500 text-sm">{s.label}</p>
+              <h2 className="text-xl font-bold text-gray-800">{s.value}</h2>
+            </div>
+          ))}
+        </div>
 
-            <p>
-              <b>Room:</b> {selected.roomName}
-            </p>
-            <p>
-              <b>Name:</b> {selected.fullName}
-            </p>
-            <p>
-              <b>Email:</b> {selected.email}
-            </p>
-            <p>
-              <b>Phone:</b> {selected.phone}
-            </p>
-            <p>
-              <b>Status:</b> {selected.status}
-            </p>
+        {/* ================= TABLE ================= */}
+        <div className="bg-white border rounded-xl overflow-hidden">
+          <div className="max-h-[500px] overflow-y-auto">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-gray-100 text-gray-600">
+                <tr>
+                  <th className="p-3 text-left">Room</th>
+                  <th className="p-3 text-left">Guest</th>
+                  <th className="p-3 text-left">Email</th>
+                  <th className="p-3 text-left">Status</th>
+                  <th className="p-3 text-left">Actions</th>
+                </tr>
+              </thead>
 
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setSelected(null)}
-                className="px-3 py-1 bg-gray-200 rounded"
-              >
-                Close
-              </button>
+              <tbody>
+                {filtered.map((b) => (
+                  <tr key={b._id} className="border-t hover:bg-gray-50">
+                    <td className="p-3 font-medium text-gray-700">
+                      {b.roomName}
+                    </td>
+                    <td className="p-3 text-gray-600">{b.fullName}</td>
+                    <td className="p-3 text-gray-600">{b.email}</td>
+
+                    <td className="p-3">
+                      <span className="px-2 py-1 text-xs rounded bg-gray-500">
+                        {b.status}
+                      </span>
+                    </td>
+
+                    <td className="p-3 flex gap-2 flex-wrap">
+                      <button
+                        onClick={() => router.push(`/admin/bookings/${b._id}`)}
+                        className="text-xs px-2 py-1 bg-gray-800 text-white rounded"
+                      >
+                        View
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          router.push(`/admin/bookings/${b._id}/payment`)
+                        }
+                        className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded"
+                      >
+                        Confirm
+                      </button>
+
+                      <button
+                        onClick={() => updateStatus(b._id, "cancelled")}
+                        className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded"
+                      >
+                        Cancel
+                      </button>
+
+                      <a
+                        href={`mailto:${b.email}?subject=Booking Update`}
+                        className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded"
+                      >
+                        Email
+                      </a>
+
+                      <button
+                        onClick={() => deleteBooking(b._id)}
+                        className="text-xs px-2 py-1 bg-black text-white rounded"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* ================= MODAL ================= */}
+        {selected && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-xl w-[90%] max-w-md">
+              <h2 className="text-lg font-bold mb-3">Booking Details</h2>
+
+              <p>
+                <b>Room:</b> {selected.roomName}
+              </p>
+              <p>
+                <b>Name:</b> {selected.fullName}
+              </p>
+              <p>
+                <b>Email:</b> {selected.email}
+              </p>
+              <p>
+                <b>Phone:</b> {selected.phone}
+              </p>
+              <p>
+                <b>Status:</b> {selected.status}
+              </p>
+
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={() => setSelected(null)}
+                  className="px-3 py-1 bg-gray-200 rounded"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     </AdminLayout>
   );
 }

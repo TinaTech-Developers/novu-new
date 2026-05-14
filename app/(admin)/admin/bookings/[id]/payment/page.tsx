@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import AdminLayout from "../../../_components/layout";
 
 export default function PaymentPage() {
   const { id } = useParams();
@@ -10,8 +11,9 @@ export default function PaymentPage() {
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const [method, setMethod] = useState("cash");
-  const [type, setType] = useState("full"); // full | deposit
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [amountPaid, setAmountPaid] = useState<number>(0);
+  const [staffName, setStaffName] = useState("");
 
   useEffect(() => {
     const fetchBooking = async () => {
@@ -24,22 +26,38 @@ export default function PaymentPage() {
     fetchBooking();
   }, [id]);
 
-  const calculateAmount = () => {
-    if (!booking) return 0;
+  // ================= CALCULATIONS =================
+  const total = booking?.total || 0;
 
-    if (type === "deposit") return booking.total * 0.3;
-    return booking.total;
-  };
+  const balance = useMemo(() => {
+    return Math.max(total - amountPaid, 0);
+  }, [total, amountPaid]);
 
+  const paymentStatus = useMemo(() => {
+    if (amountPaid <= 0) return "unpaid";
+    if (amountPaid >= total) return "paid";
+    return "partial";
+  }, [amountPaid, total]);
+
+  // ================= SUBMIT =================
   const confirmPayment = async () => {
+    if (!amountPaid || amountPaid <= 0) {
+      alert("Enter a valid amount");
+      return;
+    }
+
+    if (!staffName) {
+      alert("Enter staff name");
+      return;
+    }
+
     const res = await fetch(`/api/bookings/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        status: "confirmed",
-        paymentStatus: type === "deposit" ? "deposit_paid" : "paid",
-        paymentMethod: method,
-        amountPaid: calculateAmount(),
+        amountPaid: Number(amountPaid),
+        paymentMethod,
+        paymentProcessedBy: staffName,
       }),
     });
 
@@ -48,52 +66,90 @@ export default function PaymentPage() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="p-6">Loading...</div>;
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl border">
-      <h1 className="text-2xl font-bold mb-4">Payment Confirmation</h1>
-
-      <p className="mb-2">
-        <b>Room:</b> {booking.roomName}
-      </p>
-      <p className="mb-2">
-        <b>Total:</b> ${booking.total}
-      </p>
-
-      <div className="mt-4 space-y-3">
-        <select
-          className="w-full border p-2 rounded"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-        >
-          <option value="full">Full Payment</option>
-          <option value="deposit">30% Deposit</option>
-        </select>
-
-        <select
-          className="w-full border p-2 rounded"
-          value={method}
-          onChange={(e) => setMethod(e.target.value)}
-        >
-          <option value="cash">Cash</option>
-          <option value="card">Card</option>
-          <option value="mobile_money">Mobile Money</option>
-        </select>
-
-        <div className="p-3 bg-gray-100 rounded">
-          <p>
-            Amount to pay: <b>${calculateAmount()}</b>
+    <AdminLayout>
+      <div className="max-w-3xl mx-auto bg-white border rounded-xl p-6 space-y-6">
+        {/* HEADER */}
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">
+            Payment Processing
+          </h1>
+          <p className="text-sm text-gray-500">
+            Room: <b>{booking.roomName}</b>
           </p>
         </div>
 
+        {/* SUMMARY */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-4 bg-gray-100 rounded-lg">
+            <p className="text-xs text-gray-500">Total Amount</p>
+            <p className="text-lg font-bold text-gray-900">${total}</p>
+          </div>
+
+          <div className="p-4 bg-green-100 rounded-lg">
+            <p className="text-xs text-green-600">Amount Paid</p>
+            <p className="text-lg font-bold text-green-700">${amountPaid}</p>
+          </div>
+
+          <div className="p-4 bg-red-100 rounded-lg">
+            <p className="text-xs text-red-600">Balance</p>
+            <p className="text-lg font-bold text-red-700">${balance}</p>
+          </div>
+        </div>
+
+        {/* INPUTS */}
+        <div className="space-y-4">
+          <input
+            type="number"
+            placeholder="Enter amount paid"
+            value={amountPaid}
+            onChange={(e) => setAmountPaid(Number(e.target.value))}
+            className="w-full border p-3 rounded-lg border-gray-300 text-gray-800"
+          />
+
+          <input
+            type="text"
+            placeholder="Staff name (who processed payment)"
+            value={staffName}
+            onChange={(e) => setStaffName(e.target.value)}
+            className="w-full border p-3 rounded-lg border-gray-300 text-gray-800"
+          />
+
+          <select
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="w-full border p-3 rounded-lg border-gray-300 text-gray-800"
+          >
+            <option value="cash">Cash</option>
+            <option value="card">Card</option>
+            <option value="mobile_money">Mobile Money</option>
+          </select>
+        </div>
+
+        {/* STATUS BADGE */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-600">Status:</span>
+          <span
+            className={`px-3 py-1 text-xs rounded-full font-medium ${
+              paymentStatus === "paid" ? "bg-green-600 text-white"
+              : paymentStatus === "partial" ? "bg-yellow-500 text-white"
+              : "bg-gray-400 text-white"
+            }`}
+          >
+            {paymentStatus.toUpperCase()}
+          </span>
+        </div>
+
+        {/* BUTTON */}
         <button
           onClick={confirmPayment}
-          className="w-full bg-green-600 text-white py-3 rounded"
+          className="w-full bg-[var(--primary)] text-white py-3 rounded-lg hover:opacity-90"
         >
-          Confirm Payment & Approve Booking
+          Confirm Payment
         </button>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

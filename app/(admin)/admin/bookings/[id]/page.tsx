@@ -183,31 +183,162 @@ export default function BookingDetailsPage() {
                   </div>
                 </div>
               </motion.div>
+              {/* PAYMENT SECTION */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="md:col-span-2 bg-gray-100 border p-6 mt-4 "
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Payment Information
+                </h3>
 
+                <div className="grid md:grid-cols-4 gap-4 text-sm border-b-2 pb-4 border-gray-300">
+                  <div>
+                    <p className="text-gray-500">Payment Status</p>
+                    <p className="font-semibold text-gray-600">
+                      {booking.paymentStatus}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-gray-500">Method</p>
+                    <p className="font-semibold text-gray-600">
+                      {booking.paymentMethod || "Not set"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-gray-500">Amount Paid</p>
+                    <p className="font-semibold text-yellow-600">
+                      ${booking.amountPaid || 0}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-gray-500">Balance</p>
+                    <p className="font-semibold text-red-600">
+                      ${(booking.total - (booking.amountPaid || 0)).toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 text-sm text-gray-500">
+                  Processed by:{" "}
+                  <span className="font-semibold">
+                    {booking.paymentProcessedBy || "—"}
+                  </span>
+                </div>
+              </motion.div>
               {/* PAYMENT */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="md:col-span-2 bg-black text-white p-3"
+                className="md:col-span-2 bg-black text-white p-4"
               >
-                <div className="flex flex-col md:flex-row justify-between gap-6">
-                  <div>
+                <div className="flex flex-col md:flex-row justify-between md:items-center gap-6">
+                  {/* LEFT: TEXT */}
+                  <div className="space-y-1">
                     <p className="text-white/70 text-sm">
                       Total Booking Amount
                     </p>
 
-                    <h2 className=" font-bold mt-1">${booking.total}</h2>
+                    <h2 className="text-2xl font-bold">${booking.total}</h2>
                   </div>
 
-                  <div className="flex gap-3 flex-wrap">
-                    <button className="px-2 bg-white text-black hover:opacity-90 transition">
+                  {/* RIGHT: BUTTONS */}
+                  <div className="flex flex-wrap gap-3 items-stretch">
+                    {/* <button className="px-2 bg-white text-black hover:opacity-90 transition">
                       Print Invoice
-                    </button>
+                    </button> */}
+                    <a
+                      href={`mailto:${booking.email}?subject=Booking Update - ${booking.roomName}&body=${encodeURIComponent(
+                        `Dear ${booking.fullName},
 
-                    <button className="px-2 border border-white/30 hover:bg-white/10 transition">
-                      Send Email
-                    </button>
+We are pleased to confirm your booking with us. Please find your reservation details below:
+
+━━━━━━━━━━━━━━━━━━━━━━
+BOOKING DETAILS
+━━━━━━━━━━━━━━━━━━━━━━
+
+Room: ${booking.roomName}
+Category: ${booking.category}
+Check-in Date: ${new Date(booking.checkIn).toDateString()}
+Check-in Time: 2:00 PM
+
+Check-out Date: ${new Date(booking.checkOut).toDateString()}
+Check-out Time: 10:00 AM
+
+Guests: ${booking.guests}
+
+━━━━━━━━━━━━━━━━━━━━━━
+PAYMENT SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━
+
+Total Amount: $${booking.total}
+Amount Paid: $${booking.amountPaid || 0}
+Balance Due: $${(booking.total - (booking.amountPaid || 0)).toFixed(2)}
+Payment Status: ${booking.paymentStatus?.toUpperCase()}
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+IMPORTANT INFORMATION:
+- Check-in starts strictly at 2:00 PM
+- Check-out is strictly by 10:00 AM
+- Early check-in or late check-out is subject to availability
+
+If you have any questions or special requests, feel free to contact us.
+
+We look forward to hosting you.
+
+Kind regards,  
+Hotel Management Team`,
+                      )}`}
+                      className="h-10 flex items-center justify-center px-4 border border-white/30 hover:bg-white/10 transition text-sm font-medium"
+                    >
+                      Notify Guest
+                    </a>
+
+                    <a
+                      href={`mailto:${booking.email}?subject=Booking Confirmation - ${booking.roomName}&body=${encodeURIComponent(
+                        `Dear ${booking.fullName},
+
+We are pleased to confirm your booking with us. Please find your reservation details below:
+
+━━━━━━━━━━━━━━━━━━━━━━
+BOOKING DETAILS
+━━━━━━━━━━━━━━━━━━━━━━
+
+Room: ${booking.roomName}
+Category: ${booking.category}
+Check-in: ${new Date(booking.checkIn).toDateString()}
+Check-out: ${new Date(booking.checkOut).toDateString()}
+Guests: ${booking.guests}
+
+━━━━━━━━━━━━━━━━━━━━━━
+PAYMENT SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━
+
+Total Amount: $${booking.total}
+Amount Paid: $${booking.amountPaid || 0}
+Balance Due: $${(booking.total - (booking.amountPaid || 0)).toFixed(2)}
+Payment Status: ${booking.paymentStatus?.toUpperCase()}
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+If you have any questions or need assistance, feel free to contact us at any time.
+
+We look forward to hosting you.
+
+Kind regards,  
+Hotel Management Team`,
+                      )}`}
+                      className="h-10 flex items-center justify-center px-4 border border-white/30 hover:bg-white/10 transition text-sm font-medium"
+                    >
+                      Send Booking Email
+                    </a>
                   </div>
                 </div>
               </motion.div>

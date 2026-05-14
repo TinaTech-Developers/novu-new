@@ -62,10 +62,45 @@ const BookingSchema = new mongoose.Schema(
       default: 0,
     },
 
+    // ================= BOOKING STATUS =================
     status: {
       type: String,
       enum: ["pending", "confirmed", "cancelled"],
       default: "pending",
+    },
+
+    // ================= PAYMENT INFO =================
+    paymentStatus: {
+      type: String,
+      enum: ["unpaid", "partial", "paid"],
+      default: "unpaid",
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: ["cash", "card", "mobile_money"],
+      default: null,
+    },
+
+    amountPaid: {
+      type: Number,
+      default: 0,
+    },
+
+    balance: {
+      type: Number,
+      default: 0,
+    },
+
+    // ================= STAFF TRACKING =================
+    confirmedBy: {
+      type: String,
+      default: null,
+    },
+
+    paymentProcessedBy: {
+      type: String,
+      default: null,
     },
   },
   {

@@ -1,7 +1,8 @@
 "use client";
 
+import { LogOut, LogOutIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const menu = [
   { name: "Dashboard", href: "/admin/dashboard", icon: "📊" },
@@ -19,6 +20,22 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // ================= SIGN OUT =================
+  const handleLogout = async () => {
+    const confirmed = confirm("Are you sure you want to sign out?");
+
+    if (!confirmed) return;
+
+    // OPTIONAL:
+    // Clear localStorage/sessionStorage if needed
+    localStorage.removeItem("token");
+    sessionStorage.clear();
+
+    // Redirect to login page
+    router.push("/admin");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -63,7 +80,7 @@ export default function AdminLayout({
         </nav>
 
         {/* FOOTER */}
-        <div className="p-4 border-t">
+        <div className="p-4 border-t space-y-3">
           <div className="bg-gray-100 rounded-2xl p-4">
             <p className="text-xs text-gray-500">Logged in as</p>
 
@@ -71,6 +88,16 @@ export default function AdminLayout({
 
             <p className="text-xs text-gray-400 mt-2">Hotel ERP v1.0</p>
           </div>
+
+          {/* SIGN OUT BUTTON */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 text-sm font-medium transition"
+          >
+            <LogOut />
+            {/* <span>🚪</span> */}
+            <span>Sign Out</span>
+          </button>
         </div>
       </aside>
 

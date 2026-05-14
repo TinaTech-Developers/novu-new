@@ -180,7 +180,7 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-6 pb-10">
       {/* ================= HEADER ================= */}
-      <div className="bg-white border rounded-3xl p-6 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+      <div className="bg-white border rounded-lg p-6 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
         <div>
           <h1 className="text-3xl font-black text-gray-800 tracking-tight">
             Analytics Dashboard
@@ -195,7 +195,7 @@ export default function AnalyticsPage() {
         <div className="flex gap-3 flex-wrap">
           <button
             onClick={() => window.location.reload()}
-            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 transition px-5 py-3 rounded-2xl text-sm font-medium"
+            className="flex items-center gap-2 bg-gray-200 hover:bg-gray-400 transition px-5 text-white py-3 rounded-lg text-sm font-medium"
           >
             <RefreshCw size={16} />
             Refresh
@@ -203,7 +203,7 @@ export default function AnalyticsPage() {
 
           <button
             onClick={exportExcel}
-            className="flex items-center gap-2 bg-[var(--primary)] hover:opacity-90 transition text-white px-5 py-3 rounded-2xl text-sm font-semibold shadow-lg"
+            className="flex items-center gap-2 bg-[var(--primary)] hover:opacity-90 transition text-white px-5 py-3 rounded-lg text-sm font-semibold shadow-lg"
           >
             <Download size={16} />
             Export Full Report
@@ -241,7 +241,7 @@ export default function AnalyticsPage() {
         ].map((item, i) => (
           <div
             key={i}
-            className={`bg-gradient-to-br ${item.color} rounded-3xl p-6 text-white shadow-xl`}
+            className={`bg-gradient-to-br ${item.color} rounded-lg p-6 text-white shadow-xl`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -250,7 +250,7 @@ export default function AnalyticsPage() {
                 <h2 className="text-4xl font-black mt-3">{item.value}</h2>
               </div>
 
-              <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md">
+              <div className="w-14 h-14 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-md">
                 <item.icon size={28} />
               </div>
             </div>
@@ -261,7 +261,7 @@ export default function AnalyticsPage() {
       {/* ================= CHARTS ================= */}
       <div className="grid xl:grid-cols-2 gap-6">
         {/* REVENUE */}
-        <div className="bg-white border rounded-3xl p-6 shadow-sm">
+        <div className="bg-white border rounded-lg p-6 shadow-sm">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="text-xl font-bold text-gray-800">
@@ -273,7 +273,7 @@ export default function AnalyticsPage() {
               </p>
             </div>
 
-            <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
               <DollarSign className="text-green-600" />
             </div>
           </div>
@@ -309,7 +309,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* ROOM TYPES */}
-        <div className="bg-white border rounded-3xl p-6 shadow-sm">
+        <div className="bg-white border rounded-lg p-6 shadow-sm">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="text-xl font-bold text-gray-800">
@@ -321,7 +321,7 @@ export default function AnalyticsPage() {
               </p>
             </div>
 
-            <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
               <BedDouble className="text-blue-600" />
             </div>
           </div>
@@ -351,7 +351,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* BOOKINGS TREND */}
-        <div className="bg-white border rounded-3xl p-6 shadow-sm xl:col-span-2">
+        <div className="bg-white border rounded-lg p-6 shadow-sm xl:col-span-2">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="text-xl font-bold text-gray-800">
@@ -396,7 +396,7 @@ export default function AnalyticsPage() {
       {/* ================= EXTRA ANALYTICS ================= */}
       <div className="grid xl:grid-cols-3 gap-6">
         {/* BOOKING STATUS */}
-        <div className="bg-white border rounded-3xl p-6 shadow-sm">
+        <div className="bg-white border rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold text-gray-800 mb-5">
             Booking Status
           </h2>
@@ -433,7 +433,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* TOP ROOMS */}
-        <div className="bg-white border rounded-3xl p-6 shadow-sm">
+        <div className="bg-white border rounded-lg p-6 shadow-sm">
           <h2 className="text-xl font-bold text-gray-800 mb-5">
             Most Booked Rooms
           </h2>
@@ -441,7 +441,7 @@ export default function AnalyticsPage() {
           <div className="space-y-4">
             {rooms.slice(0, 5).map((room, index) => (
               <div key={room._id} className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center font-bold text-gray-700">
+                <div className="w-10 h-10 roundedlg bg-gray-100 flex items-center justify-center font-bold text-gray-700">
                   {index + 1}
                 </div>
 
@@ -462,11 +462,11 @@ export default function AnalyticsPage() {
         </div>
 
         {/* QUICK INSIGHTS */}
-        <div className="bg-gradient-to-br from-gray-900 to-black rounded-3xl p-6 shadow-xl text-white">
+        <div className="bg-gradient-to-br from-gray-900 to-black rounded-lg p-6 shadow-xl text-white">
           <h2 className="text-2xl font-black">Business Insights</h2>
 
           <div className="space-y-5 mt-6">
-            <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-md">
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-md">
               <p className="text-sm text-gray-300">
                 Average Revenue Per Booking
               </p>
@@ -479,7 +479,7 @@ export default function AnalyticsPage() {
               </h3>
             </div>
 
-            <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-md">
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-md">
               <p className="text-sm text-gray-300">Active Guests</p>
 
               <h3 className="text-3xl font-black mt-2">
@@ -487,7 +487,7 @@ export default function AnalyticsPage() {
               </h3>
             </div>
 
-            <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-md">
+            <div className="bg-white/10 rounded-lg p-4 backdrop-blur-md">
               <p className="text-sm text-gray-300">Estimated Monthly Growth</p>
 
               <h3 className="text-3xl font-black mt-2">+12.8%</h3>
@@ -497,7 +497,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* ================= RECENT BOOKINGS ================= */}
-      <div className="bg-white border rounded-3xl shadow-sm overflow-hidden">
+      <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
         <div className="p-6 border-b">
           <h2 className="text-2xl font-bold text-gray-800">Recent Bookings</h2>
 
