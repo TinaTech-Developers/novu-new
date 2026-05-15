@@ -8,10 +8,6 @@ import {
   isSameDay,
   isAfter,
   eachDayOfInterval,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval as eachMonthDay,
-  getDay,
 } from "date-fns";
 
 type Props = {
@@ -105,12 +101,12 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
   };
 
   return (
-    <div className="bg-white border rounded-2xl p-3 sm:p-4">
+    <div className="bg-white border rounded-2xl p-4">
       {/* ================= HEADER ================= */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
-        <h3 className="font-semibold text-base sm:text-lg">Select Dates</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-lg">Select Dates</h3>
 
-        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-xs">
+        <div className="flex items-center gap-4 text-xs">
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 rounded bg-gray-300" />
 
@@ -127,9 +123,9 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
 
       {/* ================= MONTHS ================= */}
       <div className="overflow-x-auto">
-        <div className="flex gap-3 sm:gap-4 min-w-max pb-2">
+        <div className="flex gap-4 min-w-max pb-2">
           {Array.from({ length: 12 }, (_, monthIndex) => {
-            const monthStart = startOfMonth(
+            const monthStart = startOfDay(
               new Date(
                 new Date().getFullYear(),
                 new Date().getMonth() + monthIndex,
@@ -137,38 +133,41 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
               ),
             );
 
-            const monthEnd = endOfMonth(monthStart);
+            const totalDays = new Date(
+              monthStart.getFullYear(),
+              monthStart.getMonth() + 1,
+              0,
+            ).getDate();
 
-            const monthDays = eachMonthDay({
-              start: monthStart,
-              end: monthEnd,
-            });
-
-            const firstDayIndex = getDay(monthStart);
+            const monthDays = Array.from(
+              { length: totalDays },
+              (_, i) =>
+                new Date(
+                  monthStart.getFullYear(),
+                  monthStart.getMonth(),
+                  i + 1,
+                ),
+            );
 
             return (
               <div
                 key={monthIndex}
-                className="
-                  bg-gray-50 border rounded-2xl p-3 sm:p-4
-                  w-[280px] sm:w-[300px]
-                  shrink-0
-                "
+                className="bg-gray-50 border rounded-2xl p-4 min-w-[300px] max-w-[300px]"
               >
                 {/* MONTH TITLE */}
                 <div className="mb-4">
-                  <h2 className="font-semibold text-gray-800 text-sm sm:text-base">
+                  <h2 className="font-semibold text-gray-800">
                     {format(monthStart, "MMMM yyyy")}
                   </h2>
                 </div>
 
                 {/* WEEKDAYS */}
-                <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
+                <div className="grid grid-cols-7 gap-2 mb-2">
                   {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
                     (d) => (
                       <div
                         key={d}
-                        className="text-[9px] sm:text-[10px] text-center text-gray-400 font-medium"
+                        className="text-[10px] text-center text-gray-400"
                       >
                         {d}
                       </div>
@@ -177,12 +176,7 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
                 </div>
 
                 {/* DAYS */}
-                <div className="grid grid-cols-7 gap-1 sm:gap-2">
-                  {/* EMPTY SPACES */}
-                  {Array.from({ length: firstDayIndex }).map((_, i) => (
-                    <div key={`empty-${i}`} />
-                  ))}
-
+                <div className="grid grid-cols-7 gap-2">
                   {monthDays.map((day) => {
                     const disabled = isBooked(day);
 
@@ -198,9 +192,7 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
                         disabled={disabled}
                         onClick={() => handleClick(day)}
                         className={`
-                          relative rounded-lg transition
-                          min-h-[52px] sm:min-h-[58px]
-                          p-1 sm:p-2
+                          relative p-2 rounded-lg text-xs transition
 
                           ${selected ? "bg-[var(--primary)] text-white" : ""}
 
@@ -223,17 +215,13 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
                           }
                         `}
                       >
-                        <div className="text-[9px] sm:text-[10px]">
-                          {format(day, "EEE")}
-                        </div>
+                        <div className="text-[10px]">{format(day, "EEE")}</div>
 
-                        <div className="font-semibold text-xs sm:text-sm">
-                          {format(day, "d")}
-                        </div>
+                        <div className="font-semibold">{format(day, "d")}</div>
 
                         {/* BOOKED INDICATOR */}
                         {disabled && (
-                          <div className="absolute top-1 right-1 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full" />
+                          <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
                         )}
                       </button>
                     );
