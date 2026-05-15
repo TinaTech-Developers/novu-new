@@ -23,18 +23,15 @@ export default function AdminLayout({
   const router = useRouter();
 
   // ================= SIGN OUT =================
+
   const handleLogout = async () => {
-    const confirmed = confirm("Are you sure you want to sign out?");
+    await fetch("/api/auth/logout", {
+      method: "POST",
+    });
 
-    if (!confirmed) return;
+    localStorage.removeItem("user");
 
-    // OPTIONAL:
-    // Clear localStorage/sessionStorage if needed
-    localStorage.removeItem("token");
-    sessionStorage.clear();
-
-    // Redirect to login page
-    router.push("/admin");
+    router.push("/admin/login");
   };
 
   return (
