@@ -61,3 +61,34 @@ export async function POST(req: Request) {
     );
   }
 }
+
+// export async function POST(req: Request) {
+//   try {
+//     await connectDB();
+
+//     const body = await req.json();
+
+//     console.log("📥 Incoming room:", body);
+
+//     // HANDLE ARRAY IMPORT
+//     if (Array.isArray(body)) {
+//       const rooms = await Room.insertMany(body);
+
+//       return Response.json(rooms);
+//     }
+
+//     // SINGLE ROOM
+//     const room = await Room.create(body);
+
+//     return Response.json(room);
+//   } catch (error: any) {
+//     console.error("❌ Room API ERROR:", error);
+
+//     return Response.json(
+//       {
+//         error: error.message,
+//       },
+//       { status: 500 },
+//     );
+//   }
+// }

@@ -113,9 +113,17 @@ export default function TwoBedsPage() {
                   {room.name}
                 </h2>
 
-                <span className="text-lg md:text-2xl font-semibold text-gray-800">
-                  ${room.price} / night
-                </span>
+                <div className="text-left sm:text-right">
+                  <p className="text-sm text-gray-500">Off Peak</p>
+
+                  <p className="text-lg font-semibold text-gray-800">
+                    ${room.pricing?.offPeak} / night
+                  </p>
+
+                  <p className="text-xs text-gray-500 mt-">
+                    Peak: ${room.pricing?.peak}
+                  </p>
+                </div>
               </div>
 
               {/* ================= CONTENT GRID ================= */}
@@ -130,6 +138,22 @@ export default function TwoBedsPage() {
                     {room.description}
                   </p>
                 </div>
+                {/* THREE BED & BREAKFAST */}
+                {room.pricing?.bedAndBreakfastOffPeak && (
+                  <div className="mt-4 bg-gray-100 rounded-xl p-3 text-sm">
+                    <p className="font-medium text-gray-700 mb-1">
+                      Bed & Breakfast
+                    </p>
+
+                    <p className="text-gray-600">
+                      Off Peak: ${room.pricing.bedAndBreakfastOffPeak}
+                    </p>
+
+                    <p className="text-gray-600">
+                      Peak: ${room.pricing.bedAndBreakfastPeak}
+                    </p>
+                  </div>
+                )}
 
                 {/* FACILITIES */}
                 <div>

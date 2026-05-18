@@ -101,30 +101,57 @@ export default function ThreeBedsPage() {
 
               {/* ================= RIGHT: CONTENT ================= */}
               <div className="flex flex-col gap-4">
-                <h2 className="text-2xl md:text-3xl text-[var(--primary)]">
-                  {room.name}
-                </h2>
+                <div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                    <h2 className="text-xl sm:text-2xl text-[var(--primary)] font-semibold">
+                      {room.name}
+                    </h2>
 
-                <p className="text-gray-600 leading-relaxed">
-                  {room.description}
-                </p>
+                    <div className="text-left sm:text-right">
+                      <p className="text-sm text-gray-500">Off Peak</p>
 
-                <p className="text-lg font-semibold text-gray-800">
-                  ${room.price} / night
-                </p>
+                      <p className="text-lg font-semibold text-gray-800">
+                        ${room.pricing?.offPeak} / night
+                      </p>
 
-                {/* ================= FACILITIES ================= */}
+                      <p className="text-xs text-gray-500 mt-1">
+                        Peak: ${room.pricing?.peak}
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-600 mt-4 text-sm leading-relaxed">
+                    {room.description}
+                  </p>
+
+                  {/* THREE BED & BREAKFAST */}
+                  {room.pricing?.bedAndBreakfastOffPeak && (
+                    <div className="mt-4 bg-gray-100 rounded-xl p-3 text-sm">
+                      <p className="font-medium text-gray-700 mb-1">
+                        Bed & Breakfast
+                      </p>
+
+                      <p className="text-gray-600">
+                        Off Peak: ${room.pricing.bedAndBreakfastOffPeak}
+                      </p>
+
+                      <p className="text-gray-600">
+                        Peak: ${room.pricing.bedAndBreakfastPeak}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                {/* ==============FACILITIES============= */}
                 <div className="flex flex-wrap gap-2">
                   {room.facilities?.map((f: string, idx: number) => (
                     <span
                       key={idx}
-                      className="text-xs bg-gray-400 px-3 py-1 rounded-full"
+                      className="text-xs bg-gray-200 text-gray-700 px-3 py-1 rounded-full"
                     >
                       {f}
                     </span>
                   ))}
                 </div>
-
                 {/* ================= BUTTONS ================= */}
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <RoomBookingCard room={room} />

@@ -69,7 +69,7 @@ export default function ExecutivePage() {
               className="grid grid-cols-1 md:grid-cols-2 gap-6 border rounded overflow-hidden shadow-sm hover:shadow-lg transition"
             >
               {/* ================= IMAGE SIDE ================= */}
-              <div className="h-[250px] md:h-[320px]">
+              <div className="h-[250px] md:h-[450px]">
                 <Swiper
                   modules={[Autoplay]}
                   autoplay={{
@@ -87,28 +87,54 @@ export default function ExecutivePage() {
               </div>
 
               {/* ================= CONTENT SIDE ================= */}
-              <div className="p-6 flex flex-col justify-between">
+              <div className="p-4 sm:p-6 flex flex-col justify-between gap-6 h-full">
                 <div>
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-2xl text-[var(--primary)]">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                    <h2 className="text-xl sm:text-2xl text-[var(--primary)] font-semibold">
                       {room.name}
                     </h2>
 
-                    <span className="text-lg font-medium text-gray-800">
-                      ${room.price} / night
-                    </span>
+                    <div className="text-left sm:text-right">
+                      <p className="text-sm text-gray-500">Off Peak</p>
+
+                      <p className="text-lg font-semibold text-gray-800">
+                        ${room.pricing?.offPeak} / night
+                      </p>
+
+                      <p className="text-xs text-gray-500 mt-1">
+                        Peak: ${room.pricing?.peak}
+                      </p>
+                    </div>
                   </div>
 
                   <p className="text-gray-600 mt-4 text-sm leading-relaxed">
                     {room.description}
                   </p>
+
+                  {/* EXECUTIVE BED & BREAKFAST */}
+                  {room.pricing?.bedAndBreakfastOffPeak && (
+                    <div className="mt-4 bg-gray-100 rounded-xl p-3 text-sm">
+                      <p className="font-medium text-gray-700 mb-1">
+                        Bed & Breakfast
+                      </p>
+
+                      <p className="text-gray-600">
+                        Off Peak: ${room.pricing.bedAndBreakfastOffPeak}
+                      </p>
+
+                      <p className="text-gray-600">
+                        Peak: ${room.pricing.bedAndBreakfastPeak}
+                      </p>
+                    </div>
+                  )}
                 </div>
-                {/* ================= FACILITIES ================= */}
+
+                {/* FACILITIES */}
                 <div className="flex flex-wrap gap-2">
                   {room.facilities?.map((f: string, idx: number) => (
                     <span
                       key={idx}
-                      className="text-xs bg-gray-400 px-3 py-1 rounded-full"
+                      className="text-xs bg-gray-200 text-gray-700 px-3 py-1 rounded-full"
                     >
                       {f}
                     </span>

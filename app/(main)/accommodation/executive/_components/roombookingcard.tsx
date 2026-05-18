@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { differenceInCalendarDays } from "date-fns";
+import { differenceInCalendarDays, startOfDay } from "date-fns";
 import HotelCalendar from "./hotelcalendar";
+import {
+  calculateBookingTotal,
+  isPeakSeason,
+  isZimbabweHoliday,
+} from "@/lib/pricing";
 
 export default function RoomBookingCard({ room }: any) {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,6 +58,7 @@ export default function RoomBookingCard({ room }: any) {
       const existingStart = new Date(b.checkIn);
       const existingEnd = new Date(b.checkOut);
 
+      // Proper hotel overlap logic
       return start < existingEnd && end > existingStart;
     });
   };
@@ -71,7 +77,8 @@ export default function RoomBookingCard({ room }: any) {
     : 0;
 
   // ================= TOTAL =================
-  const total = nights * room.price;
+  const total =
+    startDate && endDate ? calculateBookingTotal(room, startDate, endDate) : 0;
 
   // ================= HANDLE BOOKING =================
   const handleBooking = async () => {
@@ -177,198 +184,137 @@ export default function RoomBookingCard({ room }: any) {
       {/* BOOK BUTTON */}
       <button
         onClick={() => setIsOpen(true)}
-        className="
-          bg-[var(--primary)] text-white
-          px-5 sm:px-6
-          py-2.5
-          text-sm sm:text-base
-          rounded-md
-          hover:opacity-90
-          transition
-          mt-6 md:mt-0
-          w-full sm:w-auto
-        "
+        className="bg-[var(--primary)] text-white px-6 py-2 rounded-sm hover:opacity-90 transition mt-10 md:mt-0"
       >
         Book Now
       </button>
 
       {/* MODAL */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/60 z-50 p-3 sm:p-5 overflow-y-auto">
-          <div
-            className="
-              bg-white
-              w-full
-              max-w-6xl
-              mx-auto
-              rounded-2xl
-              relative
-              text-gray-700
-              mt-4 sm:mt-8
-              mb-4
-            "
-          >
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+          <div className="bg-white w-full max-w-4xl rounded p-6 relative text-gray-700 z-50">
             {/* CLOSE */}
             <button
               onClick={() => setIsOpen(false)}
-              className="
-                absolute
-                top-3 right-4
-                text-gray-600
-                text-2xl
-                hover:text-black
-                z-20
-              "
+              className="absolute top-3 right-4 text-gray-600 text-xl hover:text-black"
             >
               ×
             </button>
 
-            <div className="p-4 sm:p-6 lg:p-8">
-              {/* TITLE */}
-              <h2
-                className="
-                  text-xl sm:text-2xl lg:text-3xl
-                  font-bold
-                  text-[var(--primary)]
-                  mb-5 sm:mb-6
-                  pr-10
-                "
-              >
-                Book {room.name}
-              </h2>
+            <h2 className="text-2xl font-bold text-[var(--primary)] mb-4">
+              Book {room.name}
+            </h2>
 
-              {/* CONTENT */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 lg:gap-8">
-                {/* CALENDAR */}
-                <div className="min-w-0">
-                  <HotelCalendar
-                    key={roomBookings.length}
-                    bookedDates={roomBookings.map((b) => ({
-                      start: b.checkIn,
-                      end: b.checkOut,
-                    }))}
-                    onChange={({ start, end }) => {
-                      setStartDate(start);
-                      setEndDate(end);
-                    }}
-                  />
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* CALENDAR */}
+              <div>
+                <HotelCalendar
+                  key={roomBookings.length}
+                  bookedDates={roomBookings.map((b) => ({
+                    start: b.checkIn,
+                    end: b.checkOut,
+                  }))}
+                  onChange={({ start, end }) => {
+                    setStartDate(start);
+                    setEndDate(end);
+                  }}
+                />
+                {loadingBookings && (
+                  <p className="text-sm text-gray-500 mt-2">
+                    Loading bookings...
+                  </p>
+                )}
+              </div>
 
-                  {loadingBookings && (
-                    <p className="text-sm text-gray-500 mt-3">
-                      Loading bookings...
+              {/* FORM */}
+              <div className="flex flex-col gap-4">
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Full Name"
+                  className="border border-gray-300 p-2 rounded"
+                />
+
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  type="email"
+                  className="border border-gray-300 p-2 rounded"
+                />
+
+                <input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone"
+                  className="border border-gray-300 p-2 rounded"
+                />
+
+                {/* DATE SUMMARY */}
+                {startDate && endDate && (
+                  <div className="bg-gray-100 p-2 rounded-sm space-y-1">
+                    <p className="text-sm">
+                      <span className="font-semibold text-xs">Check In:</span>{" "}
+                      {startDate.toDateString()}
                     </p>
-                  )}
-                </div>
 
-                {/* FORM */}
-                <div className="flex flex-col gap-4">
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Full Name"
-                    className="
-                      border border-gray-300
-                      p-3
-                      rounded-lg
-                      text-sm sm:text-base
-                      outline-none
-                      focus:border-[var(--primary)]
-                    "
-                  />
+                    <p className="text-sm">
+                      <span className="font-semibold text-xs">Check Out:</span>{" "}
+                      {endDate.toDateString()}
+                    </p>
 
-                  <input
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    type="email"
-                    className="
-                      border border-gray-300
-                      p-3
-                      rounded-lg
-                      text-sm sm:text-base
-                      outline-none
-                      focus:border-[var(--primary)]
-                    "
-                  />
+                    <p className="text-sm">
+                      <span className="font-semibold text-xs">Nights:</span>{" "}
+                      {nights}
+                    </p>
 
-                  <input
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Phone"
-                    className="
-                      border border-gray-300
-                      p-3
-                      rounded-lg
-                      text-sm sm:text-base
-                      outline-none
-                      focus:border-[var(--primary)]
-                    "
-                  />
+                    <p className="font-bold text-sm">
+                      Total: ${total.toFixed(2)}
+                    </p>
+                    <div className="space-y-1">
+                      {Array.from({ length: nights }, (_, i) => {
+                        const day = new Date(startDate);
 
-                  {/* DATE SUMMARY */}
-                  {startDate && endDate && (
-                    <div className="bg-gray-100 p-4 rounded-xl space-y-2">
-                      <p className="text-sm sm:text-base break-words">
-                        <span className="font-semibold text-xs sm:text-sm">
-                          Check In:
-                        </span>{" "}
-                        {startDate.toDateString()}
-                      </p>
+                        day.setDate(day.getDate() + i);
 
-                      <p className="text-sm sm:text-base break-words">
-                        <span className="font-semibold text-xs sm:text-sm">
-                          Check Out:
-                        </span>{" "}
-                        {endDate.toDateString()}
-                      </p>
+                        const peak =
+                          isPeakSeason(day) || isZimbabweHoliday(day);
 
-                      <p className="text-sm sm:text-base">
-                        <span className="font-semibold text-xs sm:text-sm">
-                          Nights:
-                        </span>{" "}
-                        {nights}
-                      </p>
+                        return (
+                          <div key={i} className="flex justify-between text-xs">
+                            <span>{day.toDateString()}</span>
 
-                      <p className="font-bold text-base sm:text-lg">
-                        Total: ${total.toFixed(2)}
-                      </p>
+                            <span>{peak ? "Peak" : "Off Peak"}</span>
+                          </div>
+                        );
+                      })}
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* BLOCK MESSAGE */}
-                  {blocked && (
-                    <div className="bg-red-100 text-red-600 p-3 rounded-xl text-sm">
-                      Selected dates are unavailable.
-                    </div>
-                  )}
+                {/* BLOCK MESSAGE */}
+                {blocked && (
+                  <div className="bg-red-100 text-red-600 p-3 rounded-lg text-sm">
+                    Selected dates are unavailable.
+                  </div>
+                )}
 
-                  {/* BUTTON */}
-                  <button
-                    disabled={blocked || submitting}
-                    onClick={handleBooking}
-                    className={`
-                      py-3 sm:py-4
-                      rounded-xl
-                      text-white
-                      font-medium
-                      text-sm sm:text-base
-                      transition
-                      mt-2
-
-                      ${
-                        blocked || submitting ?
-                          "bg-gray-400 cursor-not-allowed"
-                        : "bg-[var(--primary)] hover:opacity-90"
-                      }
-                    `}
-                  >
-                    {submitting ?
-                      "Processing..."
-                    : blocked ?
-                      "Not Available"
-                    : "Confirm Booking"}
-                  </button>
-                </div>
+                {/* BUTTON */}
+                <button
+                  disabled={blocked || submitting}
+                  onClick={handleBooking}
+                  className={`py-3 rounded-lg text-white font-medium transition ${
+                    blocked || submitting ?
+                      "bg-gray-400 cursor-not-allowed"
+                    : "bg-[var(--primary)] hover:opacity-90"
+                  }`}
+                >
+                  {submitting ?
+                    "Processing..."
+                  : blocked ?
+                    "Not Available"
+                  : "Confirm Booking"}
+                </button>
               </div>
             </div>
           </div>

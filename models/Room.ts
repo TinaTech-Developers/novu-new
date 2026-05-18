@@ -19,10 +19,28 @@ const RoomSchema = new mongoose.Schema(
       default: "",
     },
 
-    price: {
-      type: Number,
-      required: true,
-      default: 0,
+    pricing: {
+      offPeak: {
+        type: Number,
+        required: true,
+        default: 0,
+      },
+
+      peak: {
+        type: Number,
+        required: true,
+        default: 0,
+      },
+
+      bedAndBreakfastOffPeak: {
+        type: Number,
+        default: null,
+      },
+
+      bedAndBreakfastPeak: {
+        type: Number,
+        default: null,
+      },
     },
 
     capacity: {
