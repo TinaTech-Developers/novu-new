@@ -1,8 +1,9 @@
 "use client";
 
-import { LogOut, LogOutIcon } from "lucide-react";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const menu = [
   { name: "Dashboard", href: "/admin/dashboard", icon: "📊" },
@@ -22,8 +23,31 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  // ================= SIGN OUT =================
+  const [user, setUser] = useState<any>(null);
 
+  // ================= FETCH LOGGED USER =================
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/users/me");
+
+        if (!res.ok) {
+          router.push("/admin");
+          return;
+        }
+
+        const data = await res.json();
+
+        setUser(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUser();
+  }, [router]);
+
+  // ================= SIGN OUT =================
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {
       method: "POST",
@@ -59,7 +83,7 @@ export default function AdminLayout({
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center gap-3 px-4 py-3  text-sm font-medium transition-all
+                  flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all
 
                   ${
                     active ?
@@ -78,21 +102,47 @@ export default function AdminLayout({
 
         {/* FOOTER */}
         <div className="p-4 border-t space-y-3">
-          <div className="bg-gray-100 rounded-2xl p-4">
-            <p className="text-xs text-gray-500">Logged in as</p>
+          <div className="relative overflow-hidden rounded-2xl p-4 bg-gradient-to-br from-[var(--primary)]/90 via-[var(--primary)] to-black text-white shadow-xl">
+            {/* Animated blobs */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl animate-pulse" />
 
-            <h3 className="font-semibold text-gray-800 mt-1">Administrator</h3>
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-cyan-300/10 rounded-full blur-3xl animate-pulse delay-1000" />
 
-            <p className="text-xs text-gray-400 mt-2">Hotel ERP v1.0</p>
+            {/* Moving gradient overlay */}
+            <div className="absolute inset-0 opacity-20 bg-[length:200%_200%] animate-[gradientMove_8s_ease_infinite] bg-gradient-to-r from-transparent via-white to-transparent" />
+
+            {/* Content */}
+            <div className="relative z-10">
+              <p className="text-xs text-white/70">Logged in as</p>
+
+              <h3 className="font-bold text-lg mt-1 truncate">
+                {user?.name || user?.username || "Administrator"}
+              </h3>
+
+              <p className="text-xs text-white/80 mt-1 truncate">
+                {user?.email}
+              </p>
+
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-xs text-white/60">Hotel ERP v1.0</p>
+
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-green-400 animate-ping absolute" />
+
+                  <span className="w-2 h-2 rounded-full bg-green-400 relative" />
+
+                  <span className="text-[10px] text-white/70 ml-2">ONLINE</span>
+                </div>
+              </div>
+            </div>
           </div>
-
           {/* SIGN OUT BUTTON */}
           <button
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 text-sm font-medium transition"
           >
-            <LogOut />
-            {/* <span>🚪</span> */}
+            <LogOut size={18} />
+
             <span>Sign Out</span>
           </button>
         </div>

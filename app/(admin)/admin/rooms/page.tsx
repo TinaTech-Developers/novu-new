@@ -1,5 +1,9 @@
 "use client";
-
+import {
+  calculateBookingTotal,
+  isPeakSeason,
+  isZimbabweHoliday,
+} from "@/lib/pricing";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import HotelCalendar from "@/app/(main)/accommodation/executive/_components/hotelcalendar";
@@ -152,6 +156,18 @@ export default function RoomsPage() {
       b.roomId?.toString() === selected?._id?.toString() &&
       b.status !== "cancelled",
   );
+
+  // ================= NIGHTS =================
+  const nights =
+    startDate && endDate ?
+      Math.max(1, differenceInCalendarDays(endDate, startDate))
+    : 0;
+
+  // ================= TOTAL =================
+  const total =
+    selected && startDate && endDate ?
+      calculateBookingTotal(selected, startDate, endDate)
+    : 0;
 
   // ===========overlap check for walk-in booking=================
 
@@ -687,11 +703,8 @@ export default function RoomsPage() {
                               Nights
                             </span>
 
-                            <span className="font-semibold text-gray-800 text-sm">
-                              {Math.max(
-                                1,
-                                differenceInCalendarDays(endDate, startDate),
-                              )}
+                            <span className="text-2xl font-bold text-[var(--primary)]">
+                              ${total.toFixed(2)}
                             </span>
                           </div>
 
@@ -701,13 +714,7 @@ export default function RoomsPage() {
                             </span>
 
                             <span className="text-2xl font-bold text-[var(--primary)]">
-                              $
-                              {(
-                                Math.max(
-                                  1,
-                                  differenceInCalendarDays(endDate, startDate),
-                                ) * selected.price
-                              ).toFixed(2)}
+                              ${total.toFixed(2)}
                             </span>
                           </div>
                         </motion.div>

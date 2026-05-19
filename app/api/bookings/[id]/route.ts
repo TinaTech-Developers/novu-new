@@ -39,41 +39,70 @@ export async function PATCH(
   const body = await req.json();
 
   const booking = await Booking.findById(id);
+
   if (!booking) {
-    return Response.json({ error: "Not found" }, { status: 404 });
+    return Response.json({ error: "Booking not found" }, { status: 404 });
   }
 
-  const amountPaid = Number(body.amountPaid || 0);
-  const balance = booking.total - amountPaid;
+  // ================= EXISTING PAYMENT =================
+  const existingPaid = Number(booking.amountPaid || 0);
+
+  // ================= NEW PAYMENT =================
+  const newPayment = Number(body.amountPaid || 0);
+
+  if (newPayment <= 0) {
+    return Response.json({ error: "Invalid payment amount" }, { status: 400 });
+  }
+
+  // ================= TOTAL PAID =================
+  const totalPaid = existingPaid + newPayment;
+
+  // ================= PREVENT OVERPAYMENT =================
+  if (totalPaid > booking.total) {
+    return Response.json(
+      { error: "Payment exceeds remaining balance" },
+      { status: 400 },
+    );
+  }
+
+  // ================= BALANCE =================
+  const balance = Math.max(booking.total - totalPaid, 0);
+
+  // ================= PAYMENT STATUS =================
   let paymentStatus = "unpaid";
 
-  if (amountPaid <= 0) paymentStatus = "unpaid";
-  else if (amountPaid < booking.total) paymentStatus = "partial";
-  else paymentStatus = "paid";
+  if (totalPaid <= 0) {
+    paymentStatus = "unpaid";
+  } else if (totalPaid < booking.total) {
+    paymentStatus = "partial";
+  } else {
+    paymentStatus = "paid";
+  }
 
-  // AUTO-CONFIRM RULE
+  // ================= BOOKING STATUS =================
   const status =
     paymentStatus === "partial" || paymentStatus === "paid" ?
       "confirmed"
     : "pending";
 
-  // AUTO-CONFIRM RULE
-  // if (paymentStatus === "partial" || paymentStatus === "paid") {
-  //   status = "confirmed";
-  // }
-
+  // ================= UPDATE =================
   const updated = await Booking.findByIdAndUpdate(
     id,
     {
       status,
       paymentStatus,
-      amountPaid,
+
+      amountPaid: totalPaid,
       balance,
+
       paymentMethod: body.paymentMethod,
       paymentProcessedBy: body.paymentProcessedBy,
+
+      paidAt: new Date(),
     },
     { new: true },
   );
+
   return Response.json(updated);
 }
 

@@ -136,7 +136,15 @@ export default function BookingsPage() {
                     <td className="p-3 text-gray-600">{b.email}</td>
 
                     <td className="p-3">
-                      <span className="px-2 py-1 text-xs rounded bg-gray-500">
+                      <span
+                        className={`px-2 py-1 text-xs rounded font-medium ${
+                          b.status === "confirmed" ?
+                            "bg-green-100 text-green-700"
+                          : b.status === "pending" ?
+                            "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-700"
+                        }`}
+                      >
                         {b.status}
                       </span>
                     </td>
@@ -149,15 +157,31 @@ export default function BookingsPage() {
                         View
                       </button>
 
-                      <button
-                        onClick={() =>
-                          router.push(`/admin/bookings/${b._id}/payment`)
-                        }
-                        className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded"
-                      >
-                        Confirm
-                      </button>
-
+                      {b.paymentStatus === "paid" ?
+                        <button
+                          disabled
+                          className="text-xs px-2 py-1 bg-gray-200 text-gray-500 rounded cursor-not-allowed"
+                        >
+                          Fully Paid
+                        </button>
+                      : b.paymentStatus === "partial" ?
+                        <button
+                          onClick={() =>
+                            router.push(`/admin/bookings/${b._id}/payment`)
+                          }
+                          className="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition"
+                        >
+                          Pay Balance
+                        </button>
+                      : <button
+                          onClick={() =>
+                            router.push(`/admin/bookings/${b._id}/payment`)
+                          }
+                          className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition"
+                        >
+                          Confirm Payment
+                        </button>
+                      }
                       <button
                         onClick={() => updateStatus(b._id, "cancelled")}
                         className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded"

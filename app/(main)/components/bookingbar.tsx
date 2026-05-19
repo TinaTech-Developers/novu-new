@@ -124,6 +124,10 @@ export default function BookingBar() {
               className="px-3 py-1 bg-[var(--primary)] text-white text-xs rounded-sm mt-2 inline-block mx-2"
             >
               {room.name}
+              <span className="ml-1 text-yellow-500">[{room.category}]</span>
+              <span className="ml-1 text-gray-300 text-xs">
+                (max of: {room.capacity} guests)
+              </span>
             </motion.span>
           ))}
         </div>

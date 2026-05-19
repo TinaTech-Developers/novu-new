@@ -15,6 +15,8 @@ export default function PaymentPage() {
   const [amountPaid, setAmountPaid] = useState<number>(0);
   const [staffName, setStaffName] = useState("");
 
+  const [paymentType, setPaymentType] = useState("deposit");
+
   useEffect(() => {
     const fetchBooking = async () => {
       const res = await fetch(`/api/bookings/${id}`);
@@ -29,16 +31,19 @@ export default function PaymentPage() {
   // ================= CALCULATIONS =================
   const total = booking?.total || 0;
 
-  const balance = useMemo(() => {
-    return Math.max(total - amountPaid, 0);
-  }, [total, amountPaid]);
+  const alreadyPaid = booking?.amountPaid || 0;
+
+  const remainingBalance = Math.max(total - alreadyPaid, 0);
+
+  const finalTotalPaid = alreadyPaid + amountPaid;
+
+  const balance = Math.max(total - finalTotalPaid, 0);
 
   const paymentStatus = useMemo(() => {
-    if (amountPaid <= 0) return "unpaid";
-    if (amountPaid >= total) return "paid";
+    if (finalTotalPaid <= 0) return "unpaid";
+    if (finalTotalPaid >= total) return "paid";
     return "partial";
-  }, [amountPaid, total]);
-
+  }, [finalTotalPaid, total]);
   // ================= SUBMIT =================
   const confirmPayment = async () => {
     if (!amountPaid || amountPaid <= 0) {
@@ -48,6 +53,10 @@ export default function PaymentPage() {
 
     if (!staffName) {
       alert("Enter staff name");
+      return;
+    }
+    if (finalTotalPaid > total) {
+      alert("Amount exceeds remaining balance");
       return;
     }
 
@@ -90,17 +99,32 @@ export default function PaymentPage() {
 
           <div className="p-4 bg-green-100 rounded-lg">
             <p className="text-xs text-green-600">Amount Paid</p>
-            <p className="text-lg font-bold text-green-700">${amountPaid}</p>
+            <p className="text-lg font-bold text-green-700">${alreadyPaid}</p>
           </div>
 
           <div className="p-4 bg-red-100 rounded-lg">
             <p className="text-xs text-red-600">Balance</p>
-            <p className="text-lg font-bold text-red-700">${balance}</p>
+            <p className="text-lg font-bold text-red-700">
+              ${remainingBalance}
+            </p>
           </div>
         </div>
 
         {/* INPUTS */}
         <div className="space-y-4">
+          <select
+            value={paymentType}
+            onChange={(e) => setPaymentType(e.target.value)}
+            className="w-full border p-3 rounded-lg border-gray-300 text-gray-800"
+          >
+            <option value="deposit">Deposit Payment</option>
+
+            {booking?.amountPaid > 0 && booking?.amountPaid < total && (
+              <option value="balance">Balance Payment</option>
+            )}
+
+            <option value="full">Full Payment</option>
+          </select>
           <input
             type="number"
             placeholder="Enter amount paid"
@@ -141,13 +165,22 @@ export default function PaymentPage() {
             {paymentStatus.toUpperCase()}
           </span>
         </div>
+        {paymentStatus === "partial" && (
+          <div className="bg-yellow-100 text-yellow-800 p-3 rounded-lg text-sm">
+            Remaining balance: ${balance}
+          </div>
+        )}
 
         {/* BUTTON */}
         <button
           onClick={confirmPayment}
           className="w-full bg-[var(--primary)] text-white py-3 rounded-lg hover:opacity-90"
         >
-          Confirm Payment
+          {paymentStatus === "paid" ?
+            "Complete Payment"
+          : booking?.amountPaid > 0 ?
+            "Pay Remaining Balance"
+          : "Confirm Payment"}
         </button>
       </div>
     </AdminLayout>

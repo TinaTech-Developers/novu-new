@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -12,23 +13,36 @@ export async function POST(req: Request) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return Response.json({ error: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 },
+      );
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return Response.json({ error: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 },
+      );
     }
 
+    // ================= CREATE TOKEN =================
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      {
+        id: user._id,
+        role: user.role,
+      },
       process.env.JWT_SECRET!,
-      { expiresIn: "7d" },
+      {
+        expiresIn: "7d",
+      },
     );
 
-    return Response.json({
-      token,
+    // ================= RESPONSE =================
+    const response = NextResponse.json({
+      success: true,
       user: {
         id: user._id,
         name: user.name,
@@ -36,10 +50,23 @@ export async function POST(req: Request) {
         role: user.role,
       },
     });
+
+    // ================= SET COOKIE =================
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    return response;
   } catch (err: any) {
     console.error("LOGIN ERROR:", err);
 
-    return Response.json(
+    return NextResponse.json(
       {
         error: err.message || "Login failed",
       },
