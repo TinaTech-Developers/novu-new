@@ -113,7 +113,7 @@ export default function BookingsPage() {
         </div>
 
         {/* ================= TABLE ================= */}
-        <div className="bg-white border rounded-xl overflow-hidden">
+        <div className="bg-white border  overflow-hidden">
           <div className="max-h-[500px] overflow-y-auto">
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-gray-100 text-gray-600">

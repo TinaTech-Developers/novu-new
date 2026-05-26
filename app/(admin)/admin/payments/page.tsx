@@ -86,7 +86,7 @@ export default function PaymentsPage() {
         </div>
 
         {/* ================= TABLE ================= */}
-        <div className="bg-white border rounded-xl overflow-hidden">
+        <div className="bg-white border max-h-[550px] overflow-y-auto overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-100 text-gray-700">

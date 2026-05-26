@@ -506,7 +506,7 @@ export default function AnalyticsPage() {
           </p>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[550px] overflow-y-auto">
           <table className="w-full min-w-[900px]">
             <thead className="bg-gray-50">
               <tr className="text-left text-sm text-gray-600">

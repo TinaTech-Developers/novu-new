@@ -104,7 +104,7 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
     <div className="bg-white border rounded-2xl p-4">
       {/* ================= HEADER ================= */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-lg">Select Dates</h3>
+        <h3 className="font-semibold text-lg text-gray-800">Select Dates</h3>
 
         <div className="flex items-center gap-4 text-xs">
           <div className="flex items-center gap-1">
@@ -167,7 +167,7 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
                     (d) => (
                       <div
                         key={d}
-                        className="text-[10px] text-center text-gray-400"
+                        className="text-[10px] text-center text-gray-500"
                       >
                         {d}
                       </div>
@@ -215,9 +215,13 @@ export default function HotelCalendar({ bookedDates = [], onChange }: Props) {
                           }
                         `}
                       >
-                        <div className="text-[10px]">{format(day, "EEE")}</div>
+                        <div className="text-[10px] text-gray-700">
+                          {format(day, "EEE")}
+                        </div>
 
-                        <div className="font-semibold">{format(day, "d")}</div>
+                        <div className="font-semibold text-gray-700">
+                          {format(day, "d")}
+                        </div>
 
                         {/* BOOKED INDICATOR */}
                         {disabled && (

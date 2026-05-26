@@ -31,6 +31,8 @@ export default function RoomsPage() {
 
   const [bookings, setBookings] = useState<any[]>([]);
 
+  const [includeBreakfast, setIncludeBreakfast] = useState(false);
+
   // ================= EDIT ROOM DATA =================const [editModal, setEditModal] = useState(false);
 
   const [editModal, setEditModal] = useState(false);
@@ -164,9 +166,30 @@ export default function RoomsPage() {
     : 0;
 
   // ================= TOTAL =================
+  // ================= TOTAL =================
   const total =
     selected && startDate && endDate ?
-      calculateBookingTotal(selected, startDate, endDate)
+      (() => {
+        const nights = Math.max(
+          1,
+          differenceInCalendarDays(endDate, startDate),
+        );
+
+        const peak = isPeakSeason(startDate) || isZimbabweHoliday(startDate);
+
+        // EXECUTIVE ROOM WITH BREAKFAST
+        if (selected.category === "executive" && includeBreakfast) {
+          const price =
+            peak ?
+              selected.pricing?.bedAndBreakfastPeak
+            : selected.pricing?.bedAndBreakfastOffPeak;
+
+          return (price || selected.price) * nights;
+        }
+
+        // NORMAL PRICING
+        return calculateBookingTotal(selected, startDate, endDate);
+      })()
     : 0;
 
   // ===========overlap check for walk-in booking=================
@@ -210,7 +233,8 @@ export default function RoomsPage() {
         checkOut: tomorrow,
 
         nights: 1,
-        total: selected.price,
+        total,
+        breakfastIncluded: includeBreakfast,
         guests: 1,
         status: "confirmed",
       };
@@ -234,6 +258,7 @@ export default function RoomsPage() {
 
       setWalkInModal(false);
 
+      setIncludeBreakfast(false);
       setGuestName("");
       setGuestPhone("");
       setGuestEmail("");
@@ -376,12 +401,15 @@ export default function RoomsPage() {
                         </div>
                       </td>
 
-                      <td className="p-4 text-gray-600 capitalize">
+                      <td className="p-4 text-gray-600 text-sm capitalize">
                         {room.category}
                       </td>
 
-                      <td className="p-4 font-semibold text-gray-700">
-                        ${room.price}
+                      <td className="p-4 font-semibold text-sm text-gray-700">
+                        $
+                        {room.pricing?.peak ||
+                          room.pricing?.offPeak ||
+                          room.price}
                       </td>
 
                       <td className="p-4">
@@ -571,7 +599,10 @@ export default function RoomsPage() {
                           </p>
 
                           <h3 className="text-2xl font-bold mt-1">
-                            ${selected.price}
+                            $
+                            {selected.pricing ?
+                              selected.pricing.bedAndBreakfastPeak
+                            : selected.price}
                           </h3>
                         </div>
 
@@ -656,6 +687,74 @@ export default function RoomsPage() {
                           className="w-full border border-gray-300 px-4 py-2 text-gray-700 outline-none focus:ring-2 focus:ring-[var(--primary)] transition"
                         />
                       </div>
+                      {/* ================= BREAKFAST OPTION ================= */}
+                      {selected.category === "executive" && (
+                        <div className="border border-orange-200 bg-orange-50 rounded-2xl p-4">
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <h3 className="font-semibold text-gray-800">
+                                Bed & Breakfast Option
+                              </h3>
+
+                              <p className="text-sm text-gray-600 mt-1">
+                                Guest can choose to include breakfast with the
+                                executive room.
+                              </p>
+
+                              <div className="mt-3 text-sm text-gray-700 space-y-1">
+                                <p>
+                                  Off Peak:
+                                  <span className="font-semibold ml-1">
+                                    $
+                                    {selected.pricing?.bedAndBreakfastOffPeak ||
+                                      0}
+                                  </span>
+                                </p>
+
+                                <p>
+                                  Peak Season:
+                                  <span className="font-semibold ml-1">
+                                    $
+                                    {selected.pricing?.bedAndBreakfastPeak || 0}
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setIncludeBreakfast(!includeBreakfast)
+                              }
+                              className={`w-20 h-6 rounded-full transition relative ${
+                                includeBreakfast ? "bg-green-500" : (
+                                  "bg-gray-300"
+                                )
+                              }`}
+                            >
+                              <div
+                                className={`absolute top-1 w-4 h-4 bg-white rounded-full transition ${
+                                  includeBreakfast ? "left-11" : "left-1"
+                                }`}
+                              />
+                            </button>
+                          </div>
+
+                          <div className="mt-4">
+                            <span
+                              className={`px-3 py-1 text-xs rounded-full font-medium ${
+                                includeBreakfast ?
+                                  "bg-green-100 text-green-700"
+                                : "bg-gray-200 text-gray-600"
+                              }`}
+                            >
+                              {includeBreakfast ?
+                                "Breakfast Included"
+                              : "Room Only"}
+                            </span>
+                          </div>
+                        </div>
+                      )}
 
                       {/* ================= CALENDAR ================= */}
                       <div className="border   p-4 mt-4 z-50">
@@ -717,6 +816,23 @@ export default function RoomsPage() {
                               ${total.toFixed(2)}
                             </span>
                           </div>
+                          {selected.category === "executive" && (
+                            <div className="flex items-center justify-between py-2 border-b">
+                              <span className="text-gray-500 text-sm">
+                                Breakfast
+                              </span>
+
+                              <span
+                                className={`font-semibold text-sm ${
+                                  includeBreakfast ? "text-green-600" : (
+                                    "text-gray-700"
+                                  )
+                                }`}
+                              >
+                                {includeBreakfast ? "Included" : "Not Included"}
+                              </span>
+                            </div>
+                          )}
                         </motion.div>
                       )}
 

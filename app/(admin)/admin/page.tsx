@@ -102,7 +102,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full mt-1 border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                className="w-full mt-1 border rounded-xl px-4 py-3 text-gray-600 outline-none focus:ring-2 focus:ring-[var(--primary)]"
                 placeholder="••••••••"
               />
             </div>
