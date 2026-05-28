@@ -301,44 +301,36 @@ Hotel Management Team`,
                       Notify Guest
                     </a>
 
-                    <a
-                      href={`mailto:${booking.email}?subject=Booking Confirmation - ${booking.roomName}&body=${encodeURIComponent(
-                        `Dear ${booking.fullName},
+                    <button
+                      onClick={async () => {
+                        try {
+                          const res = await fetch("/api/send-booking-email", {
+                            method: "POST",
 
-We are pleased to confirm your booking with us. Please find your reservation details below:
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
 
-━━━━━━━━━━━━━━━━━━━━━━
-BOOKING DETAILS
-━━━━━━━━━━━━━━━━━━━━━━
+                            body: JSON.stringify(booking),
+                          });
 
-Room: ${booking.roomName}
-Category: ${booking.category}
-Check-in: ${new Date(booking.checkIn).toDateString()}
-Check-out: ${new Date(booking.checkOut).toDateString()}
-Guests: ${booking.guests}
+                          const data = await res.json();
 
-━━━━━━━━━━━━━━━━━━━━━━
-PAYMENT SUMMARY
-━━━━━━━━━━━━━━━━━━━━━━
+                          if (!res.ok) {
+                            alert(data.error || "Failed to send email");
+                            return;
+                          }
 
-Total Amount: $${booking.total}
-Amount Paid: $${booking.amountPaid || 0}
-Balance Due: $${(booking.total - (booking.amountPaid || 0)).toFixed(2)}
-Payment Status: ${booking.paymentStatus?.toUpperCase()}
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-If you have any questions or need assistance, feel free to contact us at any time.
-
-We look forward to hosting you.
-
-Kind regards,  
-Hotel Management Team`,
-                      )}`}
+                          alert("Email sent successfully");
+                        } catch (err) {
+                          console.error(err);
+                          alert("Something went wrong");
+                        }
+                      }}
                       className="h-10 flex items-center justify-center px-4 border border-white/30 hover:bg-white/10 transition text-sm font-medium"
                     >
                       Send Booking Email
-                    </a>
+                    </button>
                   </div>
                 </div>
               </motion.div>

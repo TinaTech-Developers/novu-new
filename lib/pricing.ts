@@ -36,7 +36,11 @@ const zimbabweHolidays = [
 
 // ================= HOLIDAY CHECK =================
 export const isZimbabweHoliday = (date: Date) => {
-  const formatted = date.toISOString().split("T")[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  const formatted = `${year}-${month}-${day}`;
 
   return zimbabweHolidays.includes(formatted);
 };
@@ -44,6 +48,14 @@ export const isZimbabweHoliday = (date: Date) => {
 // ================= NIGHT PRICE =================
 export const getNightPrice = (room: any, date: Date, useBreakfast = false) => {
   const peak = isPeakSeason(date) || isZimbabweHoliday(date);
+
+  console.log(
+    date.toDateString(),
+    "Holiday:",
+    isZimbabweHoliday(date),
+    "Peak:",
+    peak,
+  );
 
   if (useBreakfast && room.pricing?.bedAndBreakfastOffPeak) {
     return peak ?

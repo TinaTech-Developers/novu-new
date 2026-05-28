@@ -215,10 +215,10 @@ export default function RoomsPage() {
 
       setSubmitting(true);
 
-      const today = new Date();
-
-      const tomorrow = new Date();
-      tomorrow.setDate(today.getDate() + 1);
+      if (!startDate || !endDate) {
+        alert("Please select booking dates");
+        return;
+      }
 
       const payload = {
         roomId: selected._id,
@@ -229,16 +229,16 @@ export default function RoomsPage() {
         email: guestEmail,
         phone: guestPhone,
 
-        checkIn: today,
-        checkOut: tomorrow,
+        checkIn: startDate,
+        checkOut: endDate,
 
-        nights: 1,
+        nights,
         total,
+
         breakfastIncluded: includeBreakfast,
         guests: 1,
         status: "confirmed",
       };
-
       const res = await fetch("/api/bookings", {
         method: "POST",
         headers: {
@@ -802,8 +802,8 @@ export default function RoomsPage() {
                               Nights
                             </span>
 
-                            <span className="text-2xl font-bold text-[var(--primary)]">
-                              ${total.toFixed(2)}
+                            <span className="font-semibold text-gray-800">
+                              {nights}
                             </span>
                           </div>
 

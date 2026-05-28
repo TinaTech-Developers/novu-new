@@ -18,10 +18,13 @@ export default function RoomBookingCard({ room }: any) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [guests, setGuests] = useState(1);
 
   const [bookings, setBookings] = useState<any[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const [includeBreakfast, setIncludeBreakfast] = useState(false);
 
   // ================= FETCH BOOKINGS =================
   const fetchBookings = async () => {
@@ -78,7 +81,17 @@ export default function RoomBookingCard({ room }: any) {
 
   // ================= TOTAL =================
   const total =
-    startDate && endDate ? calculateBookingTotal(room, startDate, endDate) : 0;
+    startDate && endDate ?
+      (() => {
+        // EXECUTIVE + BREAKFAST
+        if (room.category === "executive" && includeBreakfast) {
+          return calculateBookingTotal(room, startDate, endDate, true);
+        }
+
+        // NORMAL PRICING
+        return calculateBookingTotal(room, startDate, endDate);
+      })()
+    : 0;
 
   // ================= HANDLE BOOKING =================
   const handleBooking = async () => {
@@ -90,6 +103,10 @@ export default function RoomBookingCard({ room }: any) {
 
       if (!name || !email || !phone) {
         alert("Please complete all required fields");
+        return;
+      }
+      if (guests < 1) {
+        alert("Guests must be at least 1");
         return;
       }
 
@@ -138,9 +155,11 @@ export default function RoomBookingCard({ room }: any) {
 
         nights,
         total,
-        guests: 1,
-      };
 
+        breakfastIncluded: includeBreakfast,
+
+        guests,
+      };
       const res = await fetch("/api/bookings", {
         method: "POST",
         headers: {
@@ -165,6 +184,7 @@ export default function RoomBookingCard({ room }: any) {
       setName("");
       setEmail("");
       setPhone("");
+      setGuests(1);
 
       setStartDate(null);
       setEndDate(null);
@@ -192,7 +212,7 @@ export default function RoomBookingCard({ room }: any) {
       {/* MODAL */}
       {isOpen && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
-          <div className="bg-white w-full max-w-4xl rounded p-6 relative text-gray-700 z-50">
+          <div className="bg-white w-full max-w-4xl rounded p-6 relative text-gray-700 z-50 max-h-[90vh] overflow-hidden">
             {/* CLOSE */}
             <button
               onClick={() => setIsOpen(false)}
@@ -201,11 +221,11 @@ export default function RoomBookingCard({ room }: any) {
               ×
             </button>
 
-            <h2 className="text-2xl font-bold text-[var(--primary)] mb-4">
+            <h2 className="text-2xl font-bold text-[var(--primary)] mb-2">
               Book {room.name}
             </h2>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-6 h-full">
               {/* CALENDAR */}
               <div>
                 <HotelCalendar
@@ -227,12 +247,12 @@ export default function RoomBookingCard({ room }: any) {
               </div>
 
               {/* FORM */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2 overflow-y-auto pr-2 md:max-h-[75vh]">
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Full Name"
-                  className="border border-gray-300 p-2 rounded"
+                  className="border border-gray-300 p-2 text-sm rounded"
                 />
 
                 <input
@@ -240,15 +260,87 @@ export default function RoomBookingCard({ room }: any) {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email"
                   type="email"
-                  className="border border-gray-300 p-2 rounded"
+                  className="border border-gray-300 p-2 text-sm rounded"
                 />
 
                 <input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Phone"
-                  className="border border-gray-300 p-2 rounded"
+                  className="border border-gray-300 p-2 text-sm rounded"
                 />
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    Number of Guests
+                  </label>
+
+                  <input
+                    type="number"
+                    min={1}
+                    value={guests}
+                    onChange={(e) => setGuests(Number(e.target.value))}
+                    className="border border-gray-300 p-2 text-sm rounded w-full"
+                    placeholder="Guests"
+                  />
+                </div>
+                {/* BREAKFAST OPTION */}
+                {room.category === "executive" && (
+                  <div className="border border-orange-200 bg-orange-50 rounded-xl  p-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="font-semibold text-gray-800 text-sm">
+                          Bed & Breakfast
+                        </h3>
+
+                        <p className="text-xs text-gray-600 mt-1">
+                          Include breakfast with your executive room booking.
+                        </p>
+
+                        <div className="mt- space-y- text-xs text-gray-700">
+                          <p>
+                            Off Peak:
+                            <span className="font-semibold ml-1">
+                              ${room.pricing?.bedAndBreakfastOffPeak || 0}
+                            </span>
+                          </p>
+
+                          <p>
+                            Peak:
+                            <span className="font-semibold ml-1">
+                              ${room.pricing?.bedAndBreakfastPeak || 0}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setIncludeBreakfast(!includeBreakfast)}
+                        className={`w-16 h-7 rounded-full relative transition ${
+                          includeBreakfast ? "bg-green-500" : "bg-gray-300"
+                        }`}
+                      >
+                        <div
+                          className={`absolute top-1 w-5 h-5 bg-white rounded-full transition ${
+                            includeBreakfast ? "left-10" : "left-1"
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    <div className="mt-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          includeBreakfast ?
+                            "bg-green-100 text-green-700"
+                          : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {includeBreakfast ? "Breakfast Included" : "Room Only"}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {/* DATE SUMMARY */}
                 {startDate && endDate && (
@@ -271,6 +363,21 @@ export default function RoomBookingCard({ room }: any) {
                     <p className="font-bold text-sm">
                       Total: ${total.toFixed(2)}
                     </p>
+                    {room.category === "executive" && (
+                      <div className="flex justify-between text-sm border-t pt-2 mt-2">
+                        <span className="text-gray-600">Breakfast</span>
+
+                        <span
+                          className={`font-semibold ${
+                            includeBreakfast ? "text-green-600" : (
+                              "text-gray-700"
+                            )
+                          }`}
+                        >
+                          {includeBreakfast ? "Included" : "Not Included"}
+                        </span>
+                      </div>
+                    )}
                     <div className="space-y-1">
                       {Array.from({ length: nights }, (_, i) => {
                         const day = new Date(startDate);
