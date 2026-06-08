@@ -20,6 +20,11 @@ export default function RoomBookingCard({ room }: any) {
   const [phone, setPhone] = useState("");
   const [guests, setGuests] = useState(1);
 
+  const [extraBeds, setExtraBeds] = useState(0);
+
+  const [includeLunch, setIncludeLunch] = useState(false);
+  const [includeDinner, setIncludeDinner] = useState(false);
+
   const [bookings, setBookings] = useState<any[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -73,6 +78,11 @@ export default function RoomBookingCard({ room }: any) {
     isOverlapping(startDate, endDate, roomBookings)
   );
 
+  const maxExtraBeds =
+    room.category === "two-beds" || room.category === "three-beds" ? 2 : 0;
+
+  const maxGuests = room.capacity + extraBeds;
+
   // ================= NIGHTS =================
   const nights =
     startDate && endDate ?
@@ -80,17 +90,18 @@ export default function RoomBookingCard({ room }: any) {
     : 0;
 
   // ================= TOTAL =================
+  // ================= TOTAL =================
   const total =
     startDate && endDate ?
-      (() => {
-        // EXECUTIVE + BREAKFAST
-        if (room.category === "executive" && includeBreakfast) {
-          return calculateBookingTotal(room, startDate, endDate, true);
-        }
-
-        // NORMAL PRICING
-        return calculateBookingTotal(room, startDate, endDate);
-      })()
+      calculateBookingTotal(
+        room,
+        startDate,
+        endDate,
+        includeBreakfast,
+        includeLunch,
+        includeDinner,
+        extraBeds,
+      )
     : 0;
 
   // ================= HANDLE BOOKING =================
@@ -112,6 +123,10 @@ export default function RoomBookingCard({ room }: any) {
 
       if (!room._id) {
         alert("Invalid room selected");
+        return;
+      }
+      if (guests > maxGuests) {
+        alert(`Maximum guests allowed is ${maxGuests}`);
         return;
       }
 
@@ -144,21 +159,24 @@ export default function RoomBookingCard({ room }: any) {
       const bookingData = {
         roomId: room._id,
         roomName: room.name,
-        category: room.category || "unknown",
+        category: room.category,
 
         fullName: name,
         email,
         phone,
+
+        guests,
+        extraBeds,
+
+        breakfastIncluded: includeBreakfast,
+        lunchIncluded: includeLunch,
+        dinnerIncluded: includeDinner,
 
         checkIn: startDate,
         checkOut: endDate,
 
         nights,
         total,
-
-        breakfastIncluded: includeBreakfast,
-
-        guests,
       };
       const res = await fetch("/api/bookings", {
         method: "POST",
@@ -254,7 +272,6 @@ export default function RoomBookingCard({ room }: any) {
                   placeholder="Full Name"
                   className="border border-gray-300 p-2 text-sm rounded"
                 />
-
                 <input
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -262,7 +279,6 @@ export default function RoomBookingCard({ room }: any) {
                   type="email"
                   className="border border-gray-300 p-2 text-sm rounded"
                 />
-
                 <input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -270,18 +286,79 @@ export default function RoomBookingCard({ room }: any) {
                   className="border border-gray-300 p-2 text-sm rounded"
                 />
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  <label className="text-sm text-gray-700 mb-1 block">
                     Number of Guests
                   </label>
 
                   <input
                     type="number"
                     min={1}
+                    max={maxGuests}
                     value={guests}
-                    onChange={(e) => setGuests(Number(e.target.value))}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+
+                      if (value <= maxGuests) {
+                        setGuests(value);
+                      }
+                    }}
                     className="border border-gray-300 p-2 text-sm rounded w-full"
                     placeholder="Guests"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {room.category === "executive" && "Maximum 2 guests"}
+
+                    {room.category === "two-beds" &&
+                      `Maximum ${6 + extraBeds} guests`}
+
+                    {room.category === "three-beds" &&
+                      `Maximum ${8 + extraBeds} guests`}
+                  </p>
+                </div>
+                {(room.category === "two-beds" ||
+                  room.category === "three-beds") && (
+                  <div>
+                    <label className="text-sm font-medium block mb-1">
+                      Extra Beds
+                    </label>
+
+                    <select
+                      value={extraBeds}
+                      onChange={(e) => setExtraBeds(Number(e.target.value))}
+                      className="border border-gray-300 p-2 text-sm rounded w-full"
+                    >
+                      <option value={0}>No Extra Bed</option>
+                      <option value={1}>1 Extra Bed</option>
+                      <option value={2}>2 Extra Beds</option>
+                    </select>
+
+                    <p className="text-xs text-gray-500 mt-1">
+                      Maximum guests: {maxGuests}
+                    </p>
+                  </div>
+                )}{" "}
+                <div className="border rounded p-2">
+                  <div className="flex justify-between items-center">
+                    <span>Lunch</span>
+
+                    <input
+                      type="checkbox"
+                      checked={includeLunch}
+                      onChange={() => setIncludeLunch(!includeLunch)}
+                      className="text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="border rounded p-2">
+                  <div className="flex justify-between items-center">
+                    <span>Dinner</span>
+
+                    <input
+                      type="checkbox"
+                      checked={includeDinner}
+                      onChange={() => setIncludeDinner(!includeDinner)}
+                    />
+                  </div>
                 </div>
                 {/* BREAKFAST OPTION */}
                 {room.category === "executive" && (
@@ -341,7 +418,6 @@ export default function RoomBookingCard({ room }: any) {
                     </div>
                   </div>
                 )}
-
                 {/* DATE SUMMARY */}
                 {startDate && endDate && (
                   <div className="bg-gray-100 p-2 rounded-sm space-y-1">
@@ -398,14 +474,12 @@ export default function RoomBookingCard({ room }: any) {
                     </div>
                   </div>
                 )}
-
                 {/* BLOCK MESSAGE */}
                 {blocked && (
                   <div className="bg-red-100 text-red-600 p-3 rounded-lg text-sm">
                     Selected dates are unavailable.
                   </div>
                 )}
-
                 {/* BUTTON */}
                 <button
                   disabled={blocked || submitting}

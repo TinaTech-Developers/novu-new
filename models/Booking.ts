@@ -102,6 +102,27 @@ const BookingSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+
+    // additional fields can be added as needed, such as special requests, etc.
+    extraBeds: {
+      type: Number,
+      default: 0,
+    },
+
+    breakfastIncluded: {
+      type: Boolean,
+      default: false,
+    },
+
+    lunchIncluded: {
+      type: Boolean,
+      default: false,
+    },
+
+    dinnerIncluded: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

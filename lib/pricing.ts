@@ -4,9 +4,7 @@ import { eachDayOfInterval, isWithinInterval } from "date-fns";
 export const isPeakSeason = (date: Date) => {
   const year = date.getFullYear();
 
-  // Dec 15 -> Jan 2
   const peakStart = new Date(year, 11, 15);
-
   const peakEnd = new Date(year + 1, 0, 2);
 
   return isWithinInterval(date, {
@@ -24,6 +22,7 @@ const zimbabweHolidays = [
   "2026-12-26",
   "2026-08-11",
   "2026-08-12",
+
   // 2027
   "2027-01-01",
   "2027-04-10",
@@ -49,15 +48,11 @@ export const isZimbabweHoliday = (date: Date) => {
 export const getNightPrice = (room: any, date: Date, useBreakfast = false) => {
   const peak = isPeakSeason(date) || isZimbabweHoliday(date);
 
-  console.log(
-    date.toDateString(),
-    "Holiday:",
-    isZimbabweHoliday(date),
-    "Peak:",
-    peak,
-  );
-
-  if (useBreakfast && room.pricing?.bedAndBreakfastOffPeak) {
+  if (
+    useBreakfast &&
+    room.pricing?.bedAndBreakfastOffPeak &&
+    room.pricing?.bedAndBreakfastPeak
+  ) {
     return peak ?
         room.pricing.bedAndBreakfastPeak
       : room.pricing.bedAndBreakfastOffPeak;
@@ -66,25 +61,70 @@ export const getNightPrice = (room: any, date: Date, useBreakfast = false) => {
   return peak ? room.pricing.peak : room.pricing.offPeak;
 };
 
+// ================= MEAL PRICE =================
+export const getMealPrice = (room: any, date: Date) => {
+  const peak = isPeakSeason(date) || isZimbabweHoliday(date);
+
+  const roomOnly = peak ? room.pricing?.peak || 0 : room.pricing?.offPeak || 0;
+
+  const bedAndBreakfast =
+    peak ?
+      room.pricing?.bedAndBreakfastPeak
+    : room.pricing?.bedAndBreakfastOffPeak;
+
+  // If B&B pricing exists use the difference
+  if (typeof bedAndBreakfast === "number" && typeof roomOnly === "number") {
+    return Math.max(0, bedAndBreakfast - roomOnly);
+  }
+
+  // Fallback meal price
+  return 20;
+};
+
 // ================= TOTAL =================
 export const calculateBookingTotal = (
   room: any,
   startDate: Date,
   endDate: Date,
   useBreakfast = false,
+  useLunch = false,
+  useDinner = false,
+  extraBeds = 0,
 ) => {
   const days = eachDayOfInterval({
     start: startDate,
-
-    // EXCLUDE CHECKOUT DAY
     end: new Date(endDate.getTime() - 86400000),
   });
 
   let total = 0;
 
   for (const day of days) {
-    total += getNightPrice(room, day, useBreakfast);
+    let dayTotal = getNightPrice(room, day, useBreakfast);
+
+    const mealPrice = getMealPrice(room, day);
+
+    if (useLunch) {
+      dayTotal += mealPrice;
+    }
+
+    if (useDinner) {
+      dayTotal += mealPrice;
+    }
+
+    // $15 per extra bed per night
+    dayTotal += extraBeds * 15;
+
+    total += dayTotal;
   }
+
+  console.log({
+    room: room.name,
+    useBreakfast,
+    useLunch,
+    useDinner,
+    extraBeds,
+    total,
+  });
 
   return total;
 };

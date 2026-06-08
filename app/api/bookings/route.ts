@@ -56,6 +56,44 @@ export async function POST(req: Request) {
       );
     }
 
+    const guests = Number(body.guests || 1);
+    const extraBeds = Number(body.extraBeds || 0);
+
+    if (extraBeds > 2) {
+      return Response.json(
+        { error: "Maximum 2 extra beds allowed" },
+        { status: 400 },
+      );
+    }
+
+    let allowedGuests = 0;
+
+    switch (body.category) {
+      case "executive":
+        allowedGuests = 2;
+        break;
+
+      case "two-beds":
+        allowedGuests = 6 + extraBeds;
+        break;
+
+      case "three-beds":
+        allowedGuests = 8 + extraBeds;
+        break;
+
+      default:
+        allowedGuests = guests;
+    }
+
+    if (guests > allowedGuests) {
+      return Response.json(
+        {
+          error: `Maximum guests allowed for this room is ${allowedGuests}`,
+        },
+        { status: 400 },
+      );
+    }
+
     const booking = await Booking.create({
       roomId: body.roomId,
       roomName: body.roomName,
@@ -71,9 +109,12 @@ export async function POST(req: Request) {
       nights: body.nights || 1,
       total: body.total || 0,
 
-      guests: body.guests || 1,
+      guests,
+      extraBeds,
 
       breakfastIncluded: body.breakfastIncluded || false,
+      lunchIncluded: body.lunchIncluded || false,
+      dinnerIncluded: body.dinnerIncluded || false,
 
       status: "pending",
     });
@@ -99,8 +140,45 @@ export async function POST(req: Request) {
             </p>
 
             <p>
-              A deposit is required to secure your reservation.
+              To Secure your reservation, a deposit of 50% of the total booking amountis required. Once your deposit is recieved and confirmed, your booking will be officially secured.
             </p>
+            <p><strong>Payment Options</strong></p>
+            <p><strong>1. Cash Payment:</strong>(9 Crossland Road, New Alexandra Park, Harare, Zimbabwe)<strong>2. Bank Transfer</strong>(Beneficiary: Rutwill Private Limited; Bank Name- FBC Bank; 
+Acc- 6832974352200; Branch- Southerton Harare) <strong>3. Mobile Money: </strong> (Eco cash 0772241125 One Money: 0712214219)  </p>
+
+<p paddingtop="10px">
+  Cash payments may be made at any of our offices found at the following locations: 
+</p>
+
+<h4>1. Cash Drop-Off</h4>
+
+            <p>
+              Location 1<br>
+              New Alexandra Park<br>
+              Harare
+            </p>
+
+            <h4>Location 2</h4>
+            <p>
+             11 Brakenhill Road <br>
+Inyanga Downs <br>
+Nyanga <br>
+Zimbabwe
+            </p>
+
+            <p>
+            <strong>2. Ecocash</strong><br>
+              EcoCash Number: +263772241125<br>
+              Name: Vutsa Nyarumbu
+            </p>
+
+            <h4>3. Account Name</h4>
+            <p>Reference: Please use your booking name or booking reference number. <br>
+ 
+After making payment, please send proof of payment by replying to this email or via WhatsApp at 
++263712214219 or +263783288279 </p>
+
+            
 
             <h3>Your Booking</h3>
 
@@ -138,44 +216,7 @@ export async function POST(req: Request) {
 
             <hr />
 
-            <h3>Payment Options</h3>
-
-            <h4>1. Cash Drop-Off</h4>
-
-            <p>
-              Number 9 Crossland Road<br>
-              New Alexandra Park<br>
-              Harare
-            </p>
-
-            <h4>2. EcoCash</h4>
-
-            <p>
-              EcoCash Number: +263772241125<br>
-              Name: Vutsa Nyarumbu
-            </p>
-
-            <h4>3. Bank Transfer</h4>
-
-            <p>
-              Account Name: Rutwill Private Limited<br>
-              Bank Name: FBC Bank<br>
-              Account Number: 6832974352200<br>
-              Branch: Southerton Harare<br>
-              Reference: Please use your booking name.
-            </p>
-
-            <p>
-              After making payment, please send proof of payment by replying
-              to this email or via WhatsApp:
-            </p>
-
-            <ul>
-              <li>+263712214219</li>
-              <li>+263783288279</li>
-              <li>0772146009</li>
-            </ul>
-
+           
             <h3>Important Information</h3>
 
             <ul>
